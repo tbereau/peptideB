@@ -1,0 +1,145 @@
+
+
+			*** RAGTIME ***
+
+
+
+
+SOFTWARE INFORMATION :
+======================
+
+@author : Tristan Bereau
+		  (bereau@cmu.edu)
+
+@contact: Department of Physics
+		  Carnegie Mellon University
+		  Pittsburgh, PA 15213 USA
+
+@date   : December 2008
+
+@version: 1.21
+
+@license: GNU GENERAL PUBLIC LICENSE
+		  Please share feedback, bugs, code extensions to bereau@cmu.edu
+		  
+
+
+PROGRAM :
+=========
+
+Protein aggregation analysis script. ragtime relies on the STRIDE algorithm to
+extract secondary structure of amino acids. It parses the results, and
+provides further analysis for statistics over many snapshots and protein chains.
+
+ragtime has several features :
+	o  aggregation percentage
+	o  helicity percentage
+	o  length of the longest helix (only for single PDB analysis)
+	o  number of helices (only for single PDB analysis)
+	o  ratio of antiparallel (A), parallel (P), mixed (M), and helical (H)
+	   conformations 
+	o  counts of n-aggregates with arbitrary n
+	o  types of 2-aggregates (A;P)
+	o  types of 3-aggregates (A;P;M)
+	o  counts of A/P/M/E/H conformations for each amino acid, given that all
+	   protein chains are identical (E stands for extended, where the
+	   algorithm wasn't able to determine between A or P)
+	o  cluster algorithm based on hydrogen bonding
+
+
+
+GETTING STARTED :
+=================
+
+System Requirements :
+Script language     : tcl 8.4 or higher (never been tested on earlier versions,
+					  it may work...)
+Additional software : STRIDE <http://webclu.bio.wzw.tum.de/stride/>
+
+
+
+INSTALLATION :
+==============
+
+ragtime doesn't have to be compiled, it's Tcl. Make sure ragtime.tcl has execution
+permissions :
+	> chmod +x ragtime.tcl
+ragtime_functions.tcl needs either to be in the current directory, or added to
+the PATH environment variable.
+
+One needs STRIDE defined in the PATH environment variable to run. Download the
+tarball from the abovementioned STRIDE website, and untar. If your
+version of STRIDE was downloaded after Nov. 17, 2008, just compile (see
+below). Otherwise, you will need to fix by hand a small bug : 
+
+In 'report.c', line 254(?)
+
+          p->Acc->Chain->Rsd[Res]->ResType,SpaceToDash(Chain[Cn]->Id),
+
+should be replaced by
+
+          p->Acc->Chain->Rsd[Res]->ResType,SpaceToDash(p->Acc->Chain->Id),
+
+Likewise, line 272(?)
+
+          p->Dnr->Chain->Rsd[Res]->ResType,SpaceToDash(Chain[Cn]->Id),
+
+becomes 
+
+          p->Dnr->Chain->Rsd[Res]->ResType,SpaceToDash(p->Dnr->Chain->Id),
+
+
+Then compile by typing
+
+	 > make
+
+and make sure the output is added to your $PATH environment variable.
+If STRIDE cannot be found by ragtime, the script will exit.
+
+
+
+QUICK START :
+=============
+
+The script reads snapshots in the form of PDB files. At least one pdb file
+needs to be fed in the program, the maximum number of files is limited by the
+operating system's capacity.
+
+	> ragtime.tcl [OPTIONS] file...
+
+where OPTIONS can be :
+           -a           Only display aggregation related conformations
+		   -c			Cluster algorithm
+           -e           Only display helix conformations
+		   -f			stride error messages will be ignored
+           -h           Display this usage message
+           -s           Statistics on residues (only for identical chains)
+		   -y           Calculates hydrogen-bond energy
+           -v           Verbose mode
+
+The help message can also be accessed via
+
+	> ragtime.tcl --help
+
+The -a and -e options are only useful when displaying information with respect
+to each amino acid. These options can be combined with
+-v. In such cases, the output will display :
+	o  part of the STRIDE output (in which conformation is each residue)
+	o  an array of residue conformation, using the ragtime letter scheme
+	   (A/P/M/E/H) storing every snapshot
+	o  Aggregation analysis (statistics for all residues/snapshots)
+	o  Helicity analysis (statistics for all residues/snapshots)
+
+The -c option will make statistics based on hydrogen bonds between
+peptides. It will determine the distribution of clusters and bin them.
+
+The -s option counts which letter codes have been assigned to each
+residue. This is especially useful when interested in e.g. which residues most
+strongly aggregate, or form alpha-helices. This allow for statistics on each
+residue using all snapshots.
+
+The -y option will calculate hydrogen-bond energy as in eqn 8 of paper:
+T. Bereau and M. Deserno, J Chem Phys, 130, 2009
+
+
+

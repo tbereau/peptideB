@@ -1,0 +1,16 @@
+		         peptideB Credits
+		      Version 1, April 2008
+
+Copyright (C) 2008, Carnegie Mellon University,
+                    Physics Department,
+		    5000 Forbes Ave., Pittsburgh, PA, 15213, USA
+
+
+Developer : Tristan BEREAU. 
+	    email   : bereau@cmu.edu
+	    Contact : same address as above.
+
+
+Version 1 of the code was written in spring 2008 as part of the author's work
+in the DESERNO group.
+

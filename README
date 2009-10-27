@@ -1,0 +1,392 @@
+
+			 ***********************
+			*                       *
+			*        peptideB       *
+			*     Tristan Bereau    *
+			*       (2008-09)       *
+			*                       *
+			 ***********************
+
+MODEL :
+=======
+
+This software simulates a peptide model as described in:
+
+[1] T. Bereau, M. Deserno, J Chem Phys 130, 235106 (2009)
+
+
+PROGRAM :
+=========
+
+peptideB is a peptide builder. From a given sequence of amino acids, it builds
+a three-dimensional structure of (almost) all beads. The program can build as
+many peptides as necessary. 
+
+The sequence of amino acids must be set in a configuration file. The dihedral
+angles are optional, if not set random values will be given. 
+
+There are two main outputs to the program :
+      - ESPResSo - one can feed the peptide in the molecular dynamics (MD)
+        software  package. peptideB takes care of defining bonds, interactions,
+		positions,  etc. All the relevant ESPResSo parameters may be set in the
+		peptideB parameter file which will be sourced in the MD package. Then,
+		ESPResSo runs a simulation on the peptide(s).
+
+      - VMD - Visual Molecular Dynamics is a GUI that lets one visualize
+        molecules in 2D. peptideB is able to write .pdb & .psf files that are
+        read by VMD. 
+
+peptideB is able to combine these two characteristics by applying MD
+simulations on a peptide and output it in VMD as a function of simulation
+time.
+
+
+GETTING STARTED :
+=================
+
+System requirements :
+Script language :   tcl 8.4 or higher
+OS              :   Linux, Unix, Mac OS X (tested)
+Additional soft :   ESPResSo <www.espresso.mpg.de/>
+				    VMD <www.ks.uiuc.edu/Research/vmd/>
+
+INSTALLATION :
+==============
+
+Nothing to compile, it's all written in Tcl. 
+Untar the archive in any directory. Set the PEPTIDEB_DIR environment variable
+to your shell, setting it to its installation path. For example, under bash,
+extracting the archive in the HOME directory, one should add to '~/.bashrc':
+export PEPTIDEB_DIR=~/peptideB
+where the executable peptidebuilder.tcl is located inside $PEPTIDEB_DIR.
+Don't forget to add this folder to your $PATH as well, and source your bash.
+
+ * In order for peptideB to be used whithin ESPResSo: 
+   Open your espresso configuration file '~/.espressorc' (create a new one if
+   necessary) and add the following two lines:
+   
+   lappend auto_path "$env(PEPTIDEB_DIR)/src/"
+   source $env(ESPRESSO_SCRIPTS)/parallel_tempering.tcl
+   
+   Also, for the force field to work properly, you should copy the
+   'myconfig.h' file included in the home directory of peptideB to the home
+   directory of ESPResSo. This will activate all (or almost all!) the
+   necessary features of ESPResSo to run the simulations properly.
+
+
+ * In order to use the 'loadseries' command in VMD, you must source a file to
+   your ~/.vmdrc. To do so, copy the file 'vmd_plg.tcl' located in the
+   'vmd_plugin/' directory wherever you want. Then append (or create) the init
+   file ~/.vmdrc by using
+   
+   source [VMD_PLUGIN_DIRECTORY]/vmd_plg.tcl
+   
+   where you should replace [...] by the directory you chose for the
+   'vmd_plg.tcl' file.
+
+
+ * In order to use secondary structure assignment, you need to compile
+   STRIDE. It is located in peptideb/packages/stride. A simple 'make' in that
+   directory should be enough. Don't forget to add STRIDE to your PATH
+   environment variable. Please see stride/doc/stride/doc for more details.
+
+
+QUICK START :
+=============
+
+peptideB will *not* run unless a configuration file is specified in argument.
+The typical usage is :
+
+> peptidebuilder.tcl <CONFIG_FILE> [-pdb PDB_FILE]
+
+where CONFIG_FILE is a parameter file which will set many variables.
+
+There are two modes in which peptideB can be ran. 
+
+ * The first is on its own (without Espresso). It will read a sequence of
+   amino acids, build it, and output all the coordinates to a VMD-compatible
+   file. This mode can be set in the parameter file using the command 
+   
+   set espresso "off"
+   
+   or alternatively by omitting this variable at all. Run the program using
+   the command given above. If somehow the espresso_switch is turned on, this
+   method will return an error.
+
+
+ * Alternatively, one can use the Espresso integrator to simulate (a)
+   peptide(s). To do this, the main script should be parsed inside Espresso : 
+
+   > Espresso peptidebuilder.tcl <CONFIG_FILE> 
+	      [-pdb PDB_FILE] 
+	      [-espresso] 
+	      [-norandom]
+	      [-script FILE]
+	      [-analysis FILE]
+	      [-replica [-connect]]
+	      [-hremd [-connect]]
+	      [-native NATIVE]
+	      [-sidechain]
+	      [-ragtime L]
+	      [-contact1 FILE]
+	      [-contact2 FILE]
+	      [-stop STOP_THRESH]
+	      [-resume]
+	      [-hpmedium]
+	      [-randequilib]
+	      [-nopdb]
+
+   (no need for the brackets, they're just there to define what's mandatory and
+   what's optional.)
+
+   where '-espresso' is an optional argument that turns on the
+   integration. Using the Espresso binary to parse the script does *not* turn
+   on the integration automatically. 
+
+   PDB_FILE can be given as an argument to import a protein (preceeded by
+   '-pdb'). This is useful when importing a protein in Espresso. The input can
+   come from earlier simulations, or atomistic, experimental data.
+
+   The '-norandom' argument will not reinitialize the random number seed. That
+   way one can run the exact same simulation again, with the same set of
+   random numbers. Useful for testing purposes. (This seems to work only when
+   using one processor. If this is true, one has to replace Espresso by
+   Espresso_bin, as the problem seems to come from the mpirun call. Espresso
+   is merely a wrapper of Espresso_bin which already contains a call to
+   mpirun with multiple processors.)
+
+   The '-script' arguments loads a script to be loaded by peptideB. It lets
+   the user do very specific things with the program. However, it requires to
+   understand the code and learn its structure.
+
+   The '-analysis' argument runs an analysis script during integration. It
+   allows the user to choose custom observables and measure them as CG snapshots
+   are taken.
+
+   '-replica' starts a parallel tempering simulation host. The different
+   simulation temperatures are parametrized in the CONFIG_FILE. Adding the
+   '-connect' argument is required for slaves to connect to the host.
+
+   '-hremd' starts a Hamiltonian replica exchange simulation. The hamiltonian
+   coupling is on the side chain-side chain interactions, and the coupling for
+   each replica can be changed in the CONFIG_FILE. See 'examples/polyala.tcl'
+   for an example.
+
+   '-native' will compare the integrated structure with the file NATIVE at
+   each checkpoint. It calculates the nativeness order parameter and outputs
+   it in the file 'observables.dat'. The definition of the nativeness order
+   parameter can be found in paper [1], p.11, denoted 'Q'.
+
+   '-sidechain' will calculate the side-chain contribution to the energy and
+   save it to 'observables.dat'.
+
+   '-ragtime' will calculate either secondary structure related analysis or
+   the hydrogen-bond energy of the system. The type of analysis is determined
+   by the subsequent argument L (where L should either be A for helical
+   structure, B for extended (beta) conformations, or H for hydrogen-bond
+   energy). This routine is based on the ragtime.tcl script. The script is
+   included in the folder peptideb/packages/ragtime. However, it requires the
+   STRIDE algorithm to be installed and added to the PATH environment variable
+   in order to be used (see peptideB/packages/ragtime/README). The STRIDE
+   program is included in peptideb/packages/stride. Please see
+   stride/doc/stride.doc for more details. This routine can be called multiple
+   times to measure different observables (A,B,H). The 'A' option will
+   calculate the helicity fraction, the length of the longest helix present in
+   the snapshot, and the number of alpha-helices. The 'B' option will
+   calculate the beta fraction, and letter 'H' will calculate the
+   hydrogen-bond energy, as measured by eqn 8 in paper [1].
+
+   '-contact{1,2}' calculates nativity of a peptide with respect to a topology
+   file FILE. If -contact2 is selected, two topology files must be included
+   one after the other. The results will be added in 'observables.dat'
+   file. This option requires the script 'native_contacts.sh' located by
+   default in peptideb/packages/native_contacts.
+
+   '-stop' automatically stops the simulation once any order parameter that's
+   defined reaches this value (i.e. order_parameter >= STOP_THRESH). 
+
+   '-resume' continues a simulation where the last checkpoint was saved. It
+   will redo a warmup in order to avoid some unexpected constraints due to a
+   new set of forces and velocities. There might still be a few bugs in this
+   routine... 
+
+   '-nopdb' stores observable measurements but not PDB outputs.
+
+   '-hpmedium' simulates a hydrophobic environment.
+
+   '-randequilib' generates random dihedrals weighted with the Ramachandran
+   plot of Ala and Gly as found in paper [1].
+
+
+   Note that the optional arguments can be alternated, and they do not require
+   brackets. 
+
+At the end, the script will have created a new directory and stored particle
+configuration in VMD-compatible files.
+
+
+The 'configs/' folder contains several configuration files that are ready to
+be ran.
+
+
+PARAMETER FILE :
+================
+
+Here we refer the user to the 'configs/' folder which contains working
+examples. 
+
+ * AMINO_ACID SEQUENCE :
+
+The peptide sequence(s) can be set using the amino_acid variable. It is a
+nested list. One can set the amino acid with its concurrent phi and psi angles
+(see roadmap for more details on these angles), as well as the isomer. One
+typical amino acid could be given by
+
+{ALA -60 -45 L}
+   
+which is an element of the list. This means our amino acid is Alanine, with
+phi=-60 and psi=-45 degrees in a Left isomer geometry.
+
+Only the three-letter code is mandatory. If not stated, the phi and psi angles
+will be randomly attributed and a L isomer geometry will be applied.
+
+Therefore a peptide could look like this :
+
+set amino_acids {{
+    {ALA -60 -45 L}
+    {MET -59 -45 L}
+    {GLY -61 -46 L}
+    {PHE -60 -45 L}
+    {THR -60 -45 L}
+}}
+ 
+or like this :
+
+set amino_acids {
+    {ALA MET GLY PHE TYR THR }
+}
+
+(notice the second level of nesting even for 1 protein) and nesting the list
+lets us build multiple peptides at once :
+
+set amino_acids {
+    {ALA MET TYR SER GLU LYS GLY THR}
+    {GLU LYS ASN GLY THR}
+}
+
+
+ * CHEMICAL RESOLUTION :
+
+The program builds the peptide *without* any hydrogen or oxygen atoms. This is
+motivated by reducing computation costs issues when integrating the peptide in 
+Espresso. However, lots of nice features in VMD rely on the presence of these
+atoms. Therefore, an option can be set in order to reconstruct the geometry of
+these atoms on the chain after any integration step. For example, cartoon
+representations of helices and sheets are only available with H and O
+atoms. This option can be set using
+
+set display_O_H on
+
+
+ * DPD THERMOSTAT :
+
+A DPD thermostat can be used instead of the (default) Langevin thermostat. To
+turn DPD on, add the following command to the parameter file:
+
+set dpd 1
+
+
+ * OTHER :
+
+The rest is pretty obvious, and it's fairly straightforward to learn from an
+example file. 
+
+
+FORCE FIELD :
+=============
+
+The force field and all geometric parameters are defined in the file
+src/chain_parameters.tcl
+This requires lots of fine-tuning. Parameters have been optimized. Do not
+change unless you know what you are doing.
+The code has a faire amount of comments,
+therefore I will refer the user to the code should he/she be interested. 
+
+
+STRUCTURE OF THE CODE :
+=======================
+
+The main script 'peptidebuilder.tcl' is at the root of the archive. It mainly
+reads the configuration file, and starts relevant routines for the output,
+whether it is linked to Espresso or not.
+
+The 'examples/' folder contains example scripts that can be used to build
+peptides. 
+
+The 'src/' folder contains all the code. From here we have :
+ 
+* 'chain_parameters.tcl' - contains geometry information as well as force
+   field.
+
+ * 'espresso/' - all routines that are related to the integration of the
+   script in Espresso. From here will be ran the MD integrator to run a
+   simulation.
+
+ * 'input/' - will build a peptide from a sequence of amino acids. Can also
+   add chemical resolution by appending hydrogen and oxygen atoms.
+
+ * 'mmsg/' - a standard output wrapper. Easier to determine to which part of
+   the code a given message belongs to. This was written by Ira Cooke. 
+
+ * 'output/' - creates the VMD-compatible .psf and .pdb files. There is also a
+   vmd_startup file created during the process. But this needs the 'loadseries'
+   command in VMD, which has to be added as a plugin. 
+
+ * 'utils/' - contains lots of useful routines. Mainly math-geometry functions
+   that are used to build a peptide.
+
+
+OUTPUT OF A SIMULATION :
+========================
+
+Again, depending on whether or not Espresso is used, there will be two
+distinct ways the program will run. However, the output in both cases are
+mainly the same. The purpose of the script is to build a peptide and output
+the coordinates in a .pdb file (plus a .psf file for the structure). 
+
+ * Espresso turned off : only one pdb file will be created. This will
+   correspond to the geometry of the peptide freshly built.
+
+ * Espresso turned on  : there will be as many pdb files as the variable
+   $int_n_times. Between two pdb files, Espresso will have integrated the
+   equations of motion $int_steps times. This can all be parametrized in a given
+   configuration file.
+
+All the ouput files are stored in the folder $directory.
+
+
+TIPS & TRICKS :
+===============
+
+ * As the script allows one to build random coils (peptides that have no simple,
+   ordered conformation), the initial condition might be such that particles can
+   be very close to each other. This will create huge forces on the beads, and
+   proably crash the simulation (the pdb files do not allow ridiculously large
+   coordinates). The easy way out, is to use warmup. There are two variables
+   $warm_steps and $warm_n_times that control the warmup process. The idea is
+   very simple : all long-range forces are slowly uncapped, so that even if
+   particles are very close to each other, the forces are hindered, and the
+   system can slowly relax.
+   
+ * The box length cannot be set to a value too small, as the long-range
+   interactions must have a smaller range than the box length.
+
+ * VMD limits the number of pdb files to 10,000. 
+
+ * The hbond potential needs to be capped in order not to blow up in very rare
+   cases (two particles very close to each other, potential turned off because
+   of the angle, and suddenly the potential turns on : the simulation is
+   likely to crash because the potential is too stiff compared to the time
+   step that's set in the program). This should not be changed by the user.
+
+

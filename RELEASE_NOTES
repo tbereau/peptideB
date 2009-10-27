@@ -1,0 +1,140 @@
+
+			 ***********************
+			*                       *
+			*        peptideB       *
+			*     Tristan Bereau    *
+			*         (2008)        *
+			*                       *
+			 ***********************
+
+RELEASE_NOTES :
+===============
+
+ * Oct 01, 2009:
+     - Hamiltonian replica exchange has now been implemented. Example file in
+       examples/polyala.tcl.
+
+ * Sep 22, 2009:
+     - STRIDE has been added to packages/.
+	 - RAGTIME can now take into account Periodic Boundary Conditions when
+       computing hydrogen bonds.
+
+ * Sep 10, 2009:
+     - added packages/ folder containing both Ragtime and Native_contacts.
+	 - deleted scripts/ folder
+	 - moved configs/ folder to examples/.
+
+ * Sep 09, 2009:
+	 - myconfig.h added.
+	 - environment variables (e.g. PEPTIDEB_DIR) more natually used in
+	   peptidebuilder.tcl and .espressorc
+
+ * Jul 09, 2009:
+ 	 - No more 'espresso_switch' variable. Replaced by 'espresso'.
+	 - Started implementing '-randequilib' -- choose random dihedrals
+	   according to an equilibrated structure (ramachandran maps).
+ 
+ * Jun 15, 2009:
+     - Measurement of observables improved.
+
+ * May  5, 2009:
+     - Hydrophobic environment support. Still need to tune parameters.
+ 
+ * Mar 10, 2009:
+     - Automatically stop the simulation once any order parameter has reached
+	   a certain threshold.
+     - Use David Stone's script qparammod.sh to calculate native interactions
+	   in a peptide, by using the command line argument CONTACT{1,2} (one can
+	   define two independent contact order parameters).
+
+ * Nov  6, 2008:
+     - peptideB is now coupled to the ragtime.tcl script. When invoking the
+	   argument -ragtime L where L is a 1-letter code (either A for
+	   alpha-helix or B for beta-sheet) that will store the ratio of selected
+	   conformation as a function of time. 
+
+ * Oct  7, 2008:
+	 - Electrostatics has been implemented using Debye-Hueckel potentials.
+	   A second version of the MJ coefficients have been implemented for that
+	   purpose. 
+	 - Parameter optimization has been removed.
+	 - Somehow there are still problems with display of proteins which are
+	   stretched between two edges of the box...
+
+ * Jul 22, 2008:
+     - Fixed some problems related to confinement of proteins in the
+       simulation box. They had the tendency to escape ! This seems to be
+       solved now, but it's not sure...
+     - The force field is now fixed. It gives very promising results with
+       folding events of helix bundles and early aggregation events of small
+       peptides. 
+
+ * Jun 26, 2008:
+     - Proline has a specific N bead which doesn't Hbond.
+
+ * Jun 10, 2008:
+     - Starting an implementation of the replica exchange algorithm. It will
+       only allow as many simulations as processors.
+     - Analysis of the potential energy.
+
+ * May 29, 2008:
+     - The program is now able to resume a simulation. This does not seem to
+       work all the time... I should look at it again.
+
+ * May 27, 2008:
+     - [CHANGE] Side chains are now more coarse-grained, less specificity in
+       their positions and van der Waals radii. The weird dihedral potentials
+       have been removed.
+     - Improper dihedral angle now depends on chirality.
+
+ * May 14, 2008:
+     - [NEW] order parameter Q which measures the distance between C_alpha
+       atoms. This should yield much better results than dihedrals. This can
+       be turned on by adding '-native FILE' as an argument.
+     - [NEW] Source parameters in the force field from the configuration file. 
+
+ * May 13, 2008:
+     - Brand new force field parameters based on Ramachandran plot
+       analysis. Van der Waals, temperature, hydrogen bonds, seem to be finely
+       tuned. 
+     - New pdb startup file. Side chain beads are now explicitely rendered, as
+       well as their hydrophobicity using a color-code (Blue/Red). There's now
+       two startup files created, one for displaying the backbone using the
+       licorice representation and one displaying the structure using
+       NewCartoon. 
+
+ * May  8, 2008:
+     - The parameter optimizer has a new filename, which doesn't include the
+       year anymore. The overhead now includes the names of the parameters
+       that are being optimized.
+     - Implementing specificity on the side chains. They will now have
+       different strength, position relative to the backbone, and van der
+       waals radii. The strengths of all the amino acids is controlled by a
+       single parameter, since we use a hydrophobicity scale to weight the
+       different attractions between sidechains. Note that even if the code
+       might refer to beta-carbons, they are all replaced by the center of
+       mass of the side chain.
+
+ * May  7, 2008:
+     - [CHANGE] Namespace nesting has been redesigned. All functions and
+       variables now belong to the peptideb namespace. This will be useful once
+       I combine this script with an upcoming lipid model.
+
+ * May  6, 2008:
+     - [NEW] Output file for parameter optimization. It saves the state in a
+       file simplex.dat in the current directory. The file has an identifier
+       that depends on the date.
+     - [CHANGE] peptidebuilder will not print integration steps when doing
+       parameter optimization anymore.
+
+ * May  5, 2008:
+     - [NEW] Implementation of the nearest-neighbor dipole interaction by
+       applying a bias in the dihedral potentials of the angles phi and psi. 
+
+ * May  2, 2008: 
+     - [NEW] Implementation of the parameter optimizer.
+     - The hbond potential was capped in order not to misbehave in very rare
+       configurations. The capping can be set in src/chain_interactions.tcl
+       using the ::HBond_max_cap variable. It looks like 100.0 is a good
+       number for now. 
+       
