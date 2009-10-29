@@ -1,0 +1,231 @@
+chkchain.c:  if( Cmd->NProcessed && !ChInStr(Cmd->Processed,SpaceToDash(Chain->Id)) ) {
+chkchain.c:  if( !Cmd->Stringent ) 
+chkchain.c:  if( Chain->NRes < Cmd->MinLength )
+chkchain.c:  if( Chain->NRes > Cmd->MaxLength )
+chkchain.c:     (Chain->Resolution < Cmd->MinResolution || Chain->Resolution > Cmd->MaxResolution ) )
+chkchain.c:  if( (int)strlen(Cmd->Cond) != 0 )  {
+chkchain.c:    if( ChInStr(Cmd->Cond,'c') ) {
+chkchain.c:    if( Chain->Method == NMR && !ChInStr(Cmd->Cond,'n') )
+chkchain.c:    if( Chain->Method == XRay && !ChInStr(Cmd->Cond,'x') )
+chkchain.c:    if( Chain->Method == Model && !ChInStr(Cmd->Cond,'m') )
+chkchain.c:    if( Chain->Published == NO && ChInStr(Cmd->Cond,'p') )
+chkchain.c:    if( Chain->DsspAssigned == YES && ChInStr(Cmd->Cond,'d') )
+chkchain.c:    if( ChInStr(Cmd->Cond,'a') ) {
+contact_order.c:    if( !strcmp(Cmd->FirstResidue,"") ) {
+contact_order.c:      if( !PdbN2SeqN(Chain[Cn],Cmd->FirstResidue,&From) ) {
+contact_order.c:		Cmd->FirstResidue,Chain[Cn]->PdbIdent,SpaceToDash(Chain[Cn]->Id));
+contact_order.c:      strcpy(PDB_Start,Cmd->FirstResidue);
+contact_order.c:    if( !strcmp(Cmd->LastResidue,"") ) {
+contact_order.c:      if( !PdbN2SeqN(Chain[Cn],Cmd->LastResidue,&To) ) {
+contact_order.c:		Cmd->LastResidue,Chain[Cn]->PdbIdent,SpaceToDash(Chain[Cn]->Id));
+contact_order.c:      strcpy(PDB_End,Cmd->LastResidue);
+dssp.c:  if( strlen(Cmd->DsspFile) == 0 ) {
+dssp.c:    strcpy(Cmd->DsspFile,DSSPPATH);
+dssp.c:    strcat(Cmd->DsspFile,Tmp2);
+dssp.c:    strcat(Cmd->DsspFile,".dssp");
+dssp.c:  if( (fi = fopen(Cmd->DsspFile,"r")) ) {
+dssp.c:	      fprintf(stderr,"# Duplicate chain(s) in DSSP file %s\n",Cmd->DsspFile);
+dssp.c:	  strcpy(Dssp[ChainNumber]->File,Cmd->DsspFile);
+dssp.c:  if( Cmd->DsspAsn ) {
+fillasn.c:    if( Cmd->Info ) {
+fillasn.c:    if( Cmd->Info ) {
+fillasn.c:    if( Cmd->Info ) {
+fillasn.c:    if( Cmd->Info ) {
+hbenergy.c:  if( Cmd->Truncate && HBond->AccDonDist < RmGRID ) 
+hbenergy.c~:  if( Cmd->Truncate && HBond->AccDonDist < RmGRID ) 
+helix.c:  CONST = 1+Cmd->C1_H;
+helix.c:	Prob[i] = HBond[BondNumb]->Energy*(CONST+Cmd->C2_H*
+helix.c:    if( Prob[i] < Cmd->Treshold_H1 && Prob[i+1] < Cmd->Treshold_H1 ) {
+helix.c:	  PhiPsiMap[r[0]->Prop->PhiZn][r[0]->Prop->PsiZn] > Cmd->Treshold_H3 )
+helix.c:	  PhiPsiMap[r[5]->Prop->PhiZn][r[5]->Prop->PsiZn] > Cmd->Treshold_H4 )
+helix.c:  if( Cmd->Info ) {
+hydrbond.c:		if( !Cmd->SideChainHBond ) continue;
+hydrbond.c:		if( !Cmd->SideChainHBond ) continue;
+hydrbond.c:	if( Cmd->EnergyType == 'D' ) 
+hydrbond.c:		if( Dnr[dc]->Group != Peptide && !Cmd->SideChainHBond ) continue;
+hydrbond.c:			if( Acc[ac]->Group != Peptide && !Cmd->SideChainHBond ) continue;
+hydrbond.c:				Cmd->DistCutOff ) {
+hydrbond.c:				if( Cmd->MainChainPolarInt && Dnr[dc]->Group == Peptide && 
+hydrbond.c:						( (Cmd->EnergyType == 'G' && fabs(HBond[hc]->Et) > Eps && 
+hydrbond.c:						   fabs(HBond[hc]->Ep) > Eps ) || Cmd->EnergyType != 'G' ) )
+hydrbond.c:				if( Cmd->MainChainHBond && 
+hydrbond.c:				if( Cmd->MainChainHBond && 
+hydrbond.c:	if( Cmd->Info )
+hydrbond.c~:		if( !Cmd->SideChainHBond ) continue;
+hydrbond.c~:		if( !Cmd->SideChainHBond ) continue;
+hydrbond.c~:	if( Cmd->EnergyType == 'D' ) 
+hydrbond.c~:		if( Dnr[dc]->Group != Peptide && !Cmd->SideChainHBond ) continue;
+hydrbond.c~:			if( Acc[ac]->Group != Peptide && !Cmd->SideChainHBond ) continue;
+hydrbond.c~:				Cmd->DistCutOff ) {
+hydrbond.c~:				if( Cmd->MainChainPolarInt && Dnr[dc]->Group == Peptide && 
+hydrbond.c~:						( (Cmd->EnergyType == 'G' && fabs(HBond[hc]->Et) > Eps && 
+hydrbond.c~:						   fabs(HBond[hc]->Ep) > Eps ) || Cmd->EnergyType != 'G' ) )
+hydrbond.c~:				if( Cmd->MainChainHBond && 
+hydrbond.c~:				if( Cmd->MainChainHBond && 
+hydrbond.c~:	if( Cmd->Info )
+molscr.c:  if( !(fi = fopen(Cmd->MolScriptFile,"w")) )
+molscr.c:    return(escape(FAILURE,"\nCan not open molscript file %s\n\n",Cmd->MolScriptFile));
+outseq.c:  if( (int)strlen(Cmd->SeqFile) == 0 )
+outseq.c:    if( (Seq = fopen(Cmd->SeqFile,"a")) == NULL )
+outseq.c:      die("Error writing sequence file %s\n",Cmd->SeqFile);
+p_atom.c:  if( Cmd->NActive && !ChInStr(Cmd->Active,SpaceToDash(Buffer[21])) )
+p_atom.c:    return(escape(FAILURE,"File %s has no coordinates\n",Cmd->InputFile));
+p_atom.c:  if( Cmd->Stringent && Buffer[63] != '.')
+p_atom.c:    return(escape(FAILURE,"File %s has no temperature factor\n",Cmd->InputFile));
+p_atom.c:		  Cmd->InputFile,r->ResType,r->PDB_ResNumb,Chain[CC]->Id));
+p_helix.c:  if( Cmd->NActive && !ChInStr(Cmd->Active,SpaceToDash(Buffer[19])) )
+p_sheet.c:  if( Cmd->NActive && !ChInStr(Cmd->Active,SpaceToDash(Buffer[21])) )
+p_ssbond.c:  if( Cmd->NActive && !ChInStr(Cmd->Active,SpaceToDash(Buffer[15])) )
+p_turn.c:  if( Cmd->NActive && !ChInStr(Cmd->Active,SpaceToDash(Buffer[19])) )
+phipsi.c:	for( i=0; i<Cmd->NPixel; i++ )
+phipsi.c:	  if( r->Prop->Phi  >  MINPHIPSI+(float)(i)*Cmd->PhiPsiStep && 
+phipsi.c:	      r->Prop->Phi <=  MINPHIPSI+(float)(i+1)*Cmd->PhiPsiStep ) {
+phipsi.c:	for( i=0; i<Cmd->NPixel; i++ )
+phipsi.c:	  if( r->Prop->Psi  >  MINPHIPSI+(float)(i)*Cmd->PhiPsiStep && 
+phipsi.c:	      r->Prop->Psi <=  MINPHIPSI+(float)(i+1)*Cmd->PhiPsiStep ) {
+rdmap.c:  Cmd->NPixel = 0;
+rdmap.c:      if( Cmd->NPixel == 0 ) {
+rdmap.c:	  Cmd->NPixel = atoi(Fields[1]);
+rdmap.c:	  if( Cmd->NPixel < 1 || Cmd->NPixel > 1000 ) 
+rdmap.c:	  *PhiPsiMap = FloatMatrix(Cmd->NPixel,Cmd->NPixel);
+rdmap.c:	  if( (i = atoi(Fields[1])) >= 0 && i < Cmd->NPixel &&
+rdmap.c:	      (j = atoi(Fields[2])) >= 0 && j < Cmd->NPixel &&
+rdmap.c:	     Cnt ==  i*Cmd->NPixel+j &&  NFields >= 4 ) {
+rdmap.c:    Cmd->PhiPsiStep = (MAXPHIPSI - MINPHIPSI)/(float)Cmd->NPixel;
+rdmap.c:  if( !Cmd->NPixel ) die("Error reading PhiPsiMap file %s\n",MapFile);
+rdmap.c:  return(Cmd->NPixel);
+rdmap.c:  Cmd->NPixel = DEFNUMPIXEL;
+rdmap.c:  Cmd->PhiPsiStep = (MAXPHIPSI - MINPHIPSI)/(float)Cmd->NPixel;
+rdmap.c:  Cmd->NPixel = DEFNUMPIXEL;
+rdmap.c:  Cmd->PhiPsiStep = (MAXPHIPSI - MINPHIPSI)/(float)Cmd->NPixel;
+rdpdb.c:  if( !(pdb = fopen(Cmd->InputFile,"r")) )
+rdpdb.c:    strcpy(c->File,Cmd->InputFile);
+report.c:	if( !strlen(Cmd->OutFile) )
+report.c:		if( !(Out = fopen(Cmd->OutFile,"w")) )
+report.c:			die("Can not open output file %s\n",Cmd->OutFile);
+report.c:	if( !Cmd->ReportSummaryOnly )
+report.c:	if( !Cmd->ReportSummaryOnly )
+report.c:	if( Cmd->ReportBonds )
+report.c:	if( Cmd->Measure ) {
+report.c:			if( Cmd->BrookhavenAsn ) {
+report.c:			if( Cmd->DsspAsn ) {
+report.c~:	if( !strlen(Cmd->OutFile) )
+report.c~:		if( !(Out = fopen(Cmd->OutFile,"w")) )
+report.c~:			die("Can not open output file %s\n",Cmd->OutFile);
+report.c~:	if( !Cmd->ReportSummaryOnly )
+report.c~:	if( !Cmd->ReportSummaryOnly )
+report.c~:	if( Cmd->ReportBonds )
+report.c~:	if( Cmd->Measure ) {
+report.c~:			if( Cmd->BrookhavenAsn ) {
+report.c~:			if( Cmd->DsspAsn ) {
+sheet.c:	     PhiPsiMap,PatN,&PatCntN,"1331",Cmd->Treshold_E1,Cmd,0);
+sheet.c:	     PhiPsiMap,PatN,&PatCntN,"3124",Cmd->Treshold_E1,Cmd,0);
+sheet.c:		PhiPsiMap,PatN,&PatCntN,"133A",Cmd->Treshold_E1,Cmd,1))
+sheet.c:		PhiPsiMap,PatN,&PatCntN,"1-BB1",Cmd->Treshold_E1,Cmd,1)))
+sheet.c:	     PhiPsiMap,PatN,&PatCntN,"13B1",Cmd->Treshold_E1,Cmd,0);
+sheet.c:	        PhiPsiMap,PatN,&PatCntN,"13B1",Cmd->Treshold_E1,Cmd,1))
+sheet.c:		PhiPsiMap,PatN,&PatCntN,"A3+3A",Cmd->Treshold_E1,Cmd,1)))
+sheet.c:	     PhiPsiMap,PatN,&PatCntN,"133A",Cmd->Treshold_E1,Cmd,0);
+sheet.c:	     PhiPsiMap,PatP,&PatCntP,"3123",Cmd->Treshold_E2,Cmd,0);
+sheet.c:	     PhiPsiMap,PatP,&PatCntP,"1341",Cmd->Treshold_E2,Cmd,0);
+sheet.c:  if( Cmd->Info )  {
+sheet.c:  Coeff = 1+Cmd->C1_E+Cmd->C2_E*Conf;
+sheet.c:  if( Cmd->Info && Flag ) {
+stride.c:    die("Error reading PDB file %s\n",Cmd->InputFile);
+stride.c:/*   if( Cmd->Stringent )
+stride.c:  if( Cmd->BrookhavenAsn )
+stride.c:  if( Cmd->DsspAsn )
+stride.c:  if( Cmd->OutSeq )
+stride.c:  if( Cmd->ContactOrder )
+stride.c:  if( Cmd->ContactMap )
+stride.c:  if( !strlen(Cmd->MapFileHelix) )
+stride.c:    ReadPhiPsiMap(Cmd->MapFileHelix,&PhiPsiMapHelix,Cmd);
+stride.c:  if( !strlen(Cmd->MapFileSheet) )
+stride.c:    ReadPhiPsiMap(Cmd->MapFileSheet,&PhiPsiMapSheet,Cmd);
+stride.c:    die("No hydrogen bonds found in %s\n",Cmd->InputFile);
+stride.c:  if(Cmd->ExposedArea)
+stride.c:  if( Cmd->MolScript )
+stride.c:	strcpy(Cmd->MolScriptFile,List[i]+2); 
+stride.c:	Cmd->MolScript = YES;
+stride.c:      else if( OPTION == 'O' ) Cmd->ReportSummaryOnly = YES;
+stride.c:      else if( OPTION == 'H' ) Cmd->ReportBonds = YES;
+stride.c:      else if( OPTION == 'R' ) strcpy(Cmd->Active,List[i]+2);
+stride.c:      else if( OPTION == 'C' ) strcpy(Cmd->Processed,List[i]+2);
+stride.c:      else if( OPTION == 'F' ) strcpy(Cmd->OutFile,List[i]+2);
+stride.c:	strcpy(Cmd->SeqFile,List[i]+2);
+stride.c:	Cmd->OutSeq = YES;
+stride.c:      else if( OPTION == 'I' && Password ) Cmd->Info = YES;
+stride.c:      else if( OPTION == 'Z' && Password ) Cmd->Measure = YES;
+stride.c:      else if( OPTION == 'K' && Password ) Cmd->ContactOrder = YES;
+stride.c:      else if( OPTION == 'W' && Password ) Cmd->ContactMap = YES;
+stride.c:      else if( OPTION == 'X' && Password ) strcpy(Cmd->FirstResidue,List[i]+2);
+stride.c:      else if( OPTION == 'Y' && Password ) strcpy(Cmd->LastResidue,List[i]+2);
+stride.c:	strcpy(Cmd->DsspFile,List[i]+2);
+stride.c:	Cmd->DsspAsn = YES;
+stride.c:      else if( OPTION == 'B' && Password ) Cmd->BrookhavenAsn = YES;
+stride.c:	  strcpy(Cmd->MapFileHelix,List[i]+3); 
+stride.c:	  strcpy(Cmd->MapFileSheet,List[i]+3); 
+stride.c:	    Cmd->Treshold_H1 = atof(List[i]+4);
+stride.c:	    Cmd->Treshold_H3 = atof(List[i]+4);
+stride.c:	    Cmd->Treshold_H4 = atof(List[i]+4);
+stride.c:	    Cmd->Treshold_E1 = atof(List[i]+4);
+stride.c:	    Cmd->Treshold_E2 = atof(List[i]+4);
+stride.c:	    Cmd->Treshold_E3 = atof(List[i]+4);
+stride.c:	    Cmd->Treshold_E4 = atof(List[i]+4);
+stride.c:	Cmd->Stringent = YES;
+stride.c:	strcpy(Cmd->Cond,List[i]+2);
+stride.c:	if( toupper(*(List[i]+2)) == 'L' ) Cmd->MaxLength = atoi(List[i]+3);
+stride.c:	if( toupper(*(List[i]+2)) == 'G' ) Cmd->MinLength = atoi(List[i]+3);
+stride.c:	if( toupper(*(List[i]+2)) == 'L' ) Cmd->MaxResolution = atof(List[i]+3);
+stride.c:	if( toupper(*(List[i]+2)) == 'G' ) Cmd->MinResolution = atof(List[i]+3);
+stride.c:      strcpy(Cmd->InputFile,List[i]);
+stride.c:  Cmd->NActive = (int)strlen(Cmd->Active);
+stride.c:  Cmd->NProcessed = (int)strlen(Cmd->Processed);
+stride.c:  if( Cmd->Measure ) {
+stride.c:    Cmd->BrookhavenAsn = YES;
+stride.c:    Cmd->DsspAsn = YES;
+stride.c:  if( Cmd->Info ) {
+stride.c:  Cmd->SideChainHBond    = NO;
+stride.c:  Cmd->MainChainHBond    = YES;
+stride.c:  Cmd->MainChainPolarInt = YES;
+stride.c:  Cmd->Published         = NO;
+stride.c:  Cmd->DsspAssigned      = NO;
+stride.c:  Cmd->UseResolution     = NO;
+stride.c:  Cmd->Info              = NO;
+stride.c:  Cmd->Truncate          = YES;
+stride.c:  Cmd->ExposedArea       = YES;
+stride.c:  Cmd->ReportSummaryOnly = NO;
+stride.c:  Cmd->ReportBonds       = NO;
+stride.c:  Cmd->BrookhavenAsn     = NO;
+stride.c:  Cmd->DsspAsn           = NO;
+stride.c:  Cmd->MolScript         = NO;
+stride.c:  Cmd->OutSeq            = NO;
+stride.c:  Cmd->Stringent         = NO;
+stride.c:  Cmd->Measure           = NO;
+stride.c:  Cmd->EnergyType        = 'G';
+stride.c:  Cmd->DistCutOff        =  6.0;
+stride.c:  Cmd->PhiPsiStep        =  0.0;
+stride.c:  Cmd->C1_H              = -1.0;
+stride.c:  Cmd->C2_H              =  1.0;
+stride.c:  Cmd->C1_E              = -0.2;
+stride.c:  Cmd->C2_E              =  0.2;
+stride.c:  Cmd->Treshold_H1       = -230.0;
+stride.c:  Cmd->Treshold_H3       =  0.12;
+stride.c:  Cmd->Treshold_H4       =  0.06;
+stride.c:  Cmd->Treshold_E1       = -240.0;
+stride.c:  Cmd->Treshold_E2       = -310.0;
+stride.c:  Cmd->MinResolution     =  0.1;
+stride.c:  Cmd->MaxResolution     =  100.0;
+stride.c:  Cmd->MinLength         = 0;
+stride.c:  Cmd->MaxLength         = MAX_RES;
+stride.c:  Cmd->NPixel            = 0;
+stride.c:  Cmd->NActive           = 0;
+stride.c:  Cmd->NProcessed        = 0;
+stride.c:  strcpy(Cmd->FirstResidue,"");
+stride.c:  strcpy(Cmd->LastResidue,"");
+stride.c:  strcpy(Cmd->MapFileHelix,""); 
+stride.c:  strcpy(Cmd->MapFileSheet,""); 
+stride.c:  strcpy(Cmd->OutFile,"");
+stride.c:  strcpy(Cmd->Active,"");
+stride.c:  strcpy(Cmd->Processed,"");
+stride.c:  strcpy(Cmd->Cond,"");
