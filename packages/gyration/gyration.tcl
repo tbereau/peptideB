@@ -24,7 +24,7 @@
 set ::display_O_H "on"
 
 # Output file
-set output_file "gyration.dat"
+set output_file "gyration2.dat"
 
 set files [glob *.pdb]
 set files [lsort $files]
