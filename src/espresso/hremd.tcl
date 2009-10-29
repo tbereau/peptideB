@@ -93,7 +93,7 @@ namespace eval peptideb {
 	    puts $f ""
 	    puts $f "p " nonewline
 	    foreach instance $peptideb::hremd_couplings {
-		puts $f "\'coupling$instance/observables.dat\' u 1:$e_index w histeps" nonewline
+		puts $f "\'coupling$instance/observables.dat\' u 1:$e_index w l" nonewline
 		if {$instance != [lindex $peptideb::hremd_couplings end]} {
 		    puts $f ", " nonewline
 		}
