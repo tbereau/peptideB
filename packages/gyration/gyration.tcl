@@ -27,6 +27,7 @@ set ::display_O_H "on"
 set output_file "gyration.dat"
 
 set files [glob *.pdb]
+set files [lsort $files]
 
 set channel [open $output_file w]
 
@@ -38,7 +39,7 @@ foreach pdb_file $files {
 	analyze set chains 0 1 [expr [llength [lindex $coords 0]]/4]
 	set rad_g [analyze rg 0 1 [expr [llength [lindex $coords 0]]/4]]
 	
-	puts $channel [lindex $rad_g 0]
+	puts $channel [lindex $rad_g 2]
 	
 }
 
