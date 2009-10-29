@@ -98,7 +98,7 @@ namespace eval peptideb {
             puts $f ""
             puts $f "p " nonewline
             foreach temperature $peptideb::replica_temps {
-                puts $f "\'temp$temperature/observables.dat\' u 1:$e_index w histeps" nonewline
+                puts $f "\'temp$temperature/observables.dat\' u 1:$e_index w l" nonewline
                 if {$temperature != [lindex $peptideb::replica_temps end]} {
                     puts $f ", " nonewline
                 }
