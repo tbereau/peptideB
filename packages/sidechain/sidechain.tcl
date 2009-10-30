@@ -31,10 +31,14 @@ set files [lsort $files]
 
 set channel [open $output_file w]
 
+setmd box_l [lindex $peptideb::setbox_l 0]\
+    [lindex $peptideb::setbox_l 1]\
+    [lindex $peptideb::setbox_l 2]
+
 foreach pdb_file $files {
 
     set coords [::peptideb::input::import_pdb $pdb_file]
-    ::peptideb::espresso::create_topology $coords 0
+    ::peptideb::espresso::create_topology $coords
     
     # Calculate total energy due to side chain interactions                                                                      
     set sc_energy 0.
