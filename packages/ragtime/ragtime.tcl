@@ -31,6 +31,7 @@ set usage "Usage : ragtime \[OPTIONS\] pdb_file
            -e           Only display helix conformations
            -f           stride error messages will be ignored
            -h           Display this usage message
+           -o           Contact order parameter
            -y           Hydrogen bonds
            -s           Statistics on residues (only for identical chains)
            -v           Verbose mode
@@ -51,6 +52,8 @@ variable a_conf 0
 variable b_PBC 0
 variable b_PBCsize 0.
 variable c_switch 0
+variable o_switch 0
+variable o_values ""
 variable e_conf 0
 variable force 0
 variable failed 0
@@ -64,6 +67,7 @@ variable alphabet {A B C D E F G H I J K L M \
 		       N O P Q R S T U V W X Y Z}
 variable number_aa ""
 variable CA_coords ""
+variable CA_threshold 9.0;# contact distance between residues [in Angstrom]
 variable aggregates [list 0 0 0]
 variable cluster_list ""
 # 2agg counts P and A 2-aggregates
@@ -89,6 +93,8 @@ if {$argc>=1} {
 		} "h" {
 		    puts $usage
 		    exit
+		} "o" {
+		    set o_switch 1
 		} "y" {
 		    set hbonds_energy_switch 1
 		} "s" { 
@@ -118,6 +124,10 @@ foreach pdb $argv {
 	    if {$hbonds_energy_switch==1} {
 		lappend hbonds_energy [hbond_energy $pdb]
 	    }
+	    # Contact order parameter
+	    if {$o_switch == 1} {
+		lappend o_values [contact_order_parameter]
+	    }
 	    # Read file into memory and delete file
 	    set data [keep_only_beta $pdb]
 	    # Create (or append) an array containing the STRIDE data
@@ -146,7 +156,16 @@ if {$index>0} {
 	# Display array
 	parray residue
     }
-    
+
+    if {$o_switch == 1} {
+	set o_average 0.
+	foreach value $o_values {
+	    set o_average [expr $o_average + $value]
+	}
+	set o_average [expr $o_average / [llength $o_values]]
+	puts "Contact order parameter:\t $o_average"
+	puts ""
+    }
     # Store number of appearing A, P, E, and H
     set confs [conf_counting [array get residue]]
 } else {

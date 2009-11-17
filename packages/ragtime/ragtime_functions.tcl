@@ -930,6 +930,25 @@ proc sheet_orientation {line1 line2} {
     return 0
 }
 
+# Determine the contact order parameter: N/L.
+# N: number of contacting residues (distance less than $ca_threshold)
+# L: number of residues in the protein
+# This function ASSUMES that only one protein is considered.
+proc contact_order_parameter {} {
+    variable CA_coords
+    variable CA_threshold
+    
+    set num_residues [llength $CA_coords]
+    set num_contacts 0
+    for {set i 0} {$i < $num_residues} {incr i} {
+	for {set j [expr $i+1]} {$j < $num_residues} {incr j} {
+	    if {[distance [lindex $CA_coords $i] [lindex $CA_coords $j]] < $CA_threshold} {
+		incr num_contacts
+	    }
+	}
+    }
+    return [expr $num_contacts/($num_residues*1.)]
+}
 
 # Count and store number of appearing A, P, E, H, and I
 proc conf_counting residue {
