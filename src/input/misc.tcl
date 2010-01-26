@@ -31,9 +31,20 @@ namespace eval peptideb {
 		    ::mmsg::err [namespace current] "Trying to access an amino acid that does not exist."
 		}
 	    }
-	    if { [llength [lindex [lindex $peptideb::amino_acids $peptide] $position]] >3 } {
-		return [lindex [lindex [lindex $peptideb::amino_acids $peptide] $position] 3]
-	    } else {
+	    if { [llength [lindex [lindex $peptideb::amino_acids $peptide] $position]] == 5 } {
+		# case {MET 60. 40. 180. D}
+		return [lindex [lindex [lindex $peptideb::amino_acids $peptide] $position] 4]
+	    } elseif { [llength [lindex [lindex $peptideb::amino_acids $peptide] $position]] == 4 } {
+		# case {MET 60. 40. D}
+		if { [lindex [lindex [lindex $peptideb::amino_acids $peptide] $position] 3] == "D" } {
+		    return D
+		} elseif { [lindex [lindex [lindex $peptideb::amino_acids $peptide] $position] 3] == "L" } {
+		    return L
+		} else {
+		    return D
+		}
+	    }
+	    else {
 		if { [lindex [lindex [lindex $peptideb::amino_acids $peptide] $position] 1] == "D" } {
 		    return D
 		} else {
