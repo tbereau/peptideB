@@ -16,7 +16,6 @@ namespace eval peptideb {
 		set coords [oxygen $coords] 
 		set coords [hydrogenN $coords]
 	    } 
-
 	    return $coords
 	}
 
@@ -25,7 +24,7 @@ namespace eval peptideb {
 	# Returns the reconstructed chain.
 	proc oxygen {coords} {
 	    # As a sanity check, all lists should be a multiple of 4.
-	    for { set l 0 } { $l < [llength $coords] } { incr l } {
+	    for { set l 0 } { $l < [expr [llength $coords] - $peptideb::hfip_flag] } { incr l } {
 		if { [llength [lindex $coords $l]] % 4 != 0 } {
 		    ::mmsg::err [namespace current] "Problem in trying to add oxygens: the number of beads is not a multiple of 4 (N-Ca-Cb-C)."
 		}
@@ -34,7 +33,7 @@ namespace eval peptideb {
 	    # Initialize the coordinate vector
 	    set final_coords ""
 
-	    for { set l 0 } { $l < [llength $coords] } { incr l } {
+	    for { set l 0 } { $l < [expr [llength $coords] - $peptideb::hfip_flag] } { incr l } {
 		set peptide_coords [lindex $coords $l]
 		set initchainlength [llength $peptide_coords]
 		# From now on we assume that the chain is well constructed, 
@@ -83,7 +82,10 @@ namespace eval peptideb {
 		# At the end, add the whole peptide to the final vector of coordinates
 		lappend final_coords $peptide_coords
 	    }
-	    
+	    # Loop over hfip molecules                                                                                                           
+	    if { $peptideb::hfip_flag } {
+		lappend final_coords [lindex $coords [expr [llength $coords]-1]]
+	    }
 	    return $final_coords
 	}
 
@@ -94,7 +96,7 @@ namespace eval peptideb {
 	# oxygen atoms.
 	proc hydrogenN {coords} {
 	    # As a sanity check, the list should be a multiple of 4 or 5.
-	    for { set l 0 } { $l < [llength $coords] } { incr l } {
+	    for { set l 0 } { $l < [expr [llength $coords] - $peptideb::hfip_flag] } { incr l } {
 		if { [llength [lindex $coords $l]] % 5 != 0} {
 		    ::mmsg::err [namespace current] "Problem in trying to add hydrogens: the number of beads is not a multiple of 5 (N-Ca-Cb-C=O)."
 		}
@@ -103,7 +105,7 @@ namespace eval peptideb {
 	    # Initialize the coordinate vector
 	    set final_coords ""
 	    
-	    for { set l 0 } { $l < [llength $coords] } { incr l } {
+	    for { set l 0 } { $l < [expr [llength $coords] - $peptideb::hfip_flag]} { incr l } {
 		set peptide_coords [lindex $coords $l]
 		set initchainlength [llength $peptide_coords]
 		# From now on we assume that the chain is well constructed, 
@@ -144,6 +146,10 @@ namespace eval peptideb {
 		}
 		
 		lappend final_coords $peptide_coords
+	    }
+	    # Loop over hfip molecules                                                                                                           
+	    if { $peptideb::hfip_flag } {
+		lappend final_coords [lindex $coords [expr [llength $coords]-1]]
 	    }
 	    return $final_coords
 	}

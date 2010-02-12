@@ -24,9 +24,15 @@ namespace eval peptideb {
 			# Number of beads will be useful
 			set nbeads 0
 			set npeptides 0
-			for { set l 0 } { $l < [llength $coords] } { incr l } {
-				set nbeads [expr $nbeads + [llength [lindex $coords $l]]]
-				incr npeptides
+			for { set l 0 } { $l < [expr [llength $coords] - $peptideb::hfip_flag] } { incr l } {
+			    set nbeads [expr $nbeads + [llength [lindex $coords $l]]]
+			    incr npeptides
+			}
+			set hfip_num 0
+			if { $peptideb::hfip_flag } {
+			    set chain [lindex $coords [llength $peptideb::amino_acids]]
+			    set hfip_num [llength $chain]
+			    set nbeads [expr $nbeads + 3*$hfip_num]
 			}
 
 			# automatize identification of CG beads
@@ -69,12 +75,32 @@ namespace eval peptideb {
 					}
 				}
 			}
-			
+			# Loop over hfip molecules
+ 			if { $peptideb::hfip_flag } {
+			    set beads "{ F  } { C  } { F  }"
+			    set chain [lindex $coords [llength $peptideb::amino_acids]]
+ 			    set hfip_id [llength $peptideb::amino_acids]
+			    foreach hfip_mol $chain {
+				incr hfip_id
+				incr index_aa
+				for { set j 0 } { $j < 3 } { incr j} {
+				    incr index
+				    puts -nonewline $filePSF "[format %8s $index] "
+				    puts -nonewline $filePSF "[format %-4s "P$hfip_id"] "
+				    puts -nonewline $filePSF "[format %4s $index_aa] "
+				    puts -nonewline $filePSF "[format %3s IFP] "
+				    puts -nonewline $filePSF "[format %4s [lindex $beads $j]] "
+				    puts -nonewline $filePSF "[format %4s [lindex $beads $j]] "
+				    puts $filePSF "                                     "
+				}
+			    }
+			}
+
 			# Bonds
-			puts $filePSF "[format %8s [expr $nbeads - $npeptides]] !NBOND"
+			puts $filePSF "[format %8s [expr $nbeads - $npeptides - $peptideb::hfip_flag*$hfip_num]] !NBOND"		       
 			set index 0
 			set line_check 1
-			for { set l 0 } { $l < [llength $coords] } { incr l } {
+			for { set l 0 } { $l < [expr [llength $coords] - $peptideb::hfip_flag] } { incr l } {
 				set index_char 1
 				incr index
 				while { $index_char < [llength [lindex $coords $l]] } {
@@ -107,8 +133,25 @@ namespace eval peptideb {
 					incr line_check
 				}
 			}
+			# Loop over hfip molecules
+			set index_char 0
+			incr index
+ 			if { $peptideb::hfip_flag } {
+			    set chain [lindex $coords [llength $peptideb::amino_acids]]
+			    foreach hfip_mol $chain {
+				puts -nonewline $filePSF "[format %8s $index]"
+				puts -nonewline $filePSF "[format %8s [expr $index+1]]"
+				puts -nonewline $filePSF "[format %8s [expr $index+1]]"
+				puts -nonewline $filePSF "[format %8s [expr $index+2]]"
+				if { [expr $line_check % 4] == 0 } {
+				    puts $filePSF ""
+				}
+				incr index 3
+				incr line_check
+			    }
+			} 	
 			close $filePSF
-
+			
 			return
 		}
     }    

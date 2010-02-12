@@ -61,13 +61,14 @@ namespace eval peptideb {
 	    namespace eval :: {
 		source [set env(PEPTIDEB_DIR)]/src/chain_sidechain.tcl
                 source [set env(PEPTIDEB_DIR)]/src/chain_interactions.tcl
+		source [set env(PEPTIDEB_DIR)]/src/hfip_interactions.tcl
             }
 
 	    # Create an id on all the beads
 	    set j 0
 
 	    # Loop over all peptides
-	    for { set l 0 } { $l < [llength $coords] } { incr l } {    
+	    for { set l 0 } { $l < [expr [llength $coords] - $peptideb::hfip_flag]} { incr l } {    
 		set chain [lindex $coords $l]
 
 		# Verify that our chain is a multiple of 4, although it's a rather weak sanity test...
@@ -110,6 +111,28 @@ namespace eval peptideb {
 		    incr jprime
 		}
 	    }
+	    # Do we have hfip in the system?
+	    if { $peptideb::hfip_flag } {
+		# Loop over hfip molecules		
+		set chain [lindex $coords [llength $peptideb::amino_acids]]
+		foreach hfip_mol $chain {
+		    if { [llength $hfip_mol] != 3 } {
+			::mmsg::err [namespace current] "An HFIP molecule should contain 3 beads!"
+		    }
+		    # F bead
+		    set bead [lindex $hfip_mol 0]
+		    part $j pos [lindex $bead 0] [lindex $bead 1] [lindex $bead 2] type 31
+		    incr j
+		    # Cc bead
+		    set bead [lindex $hfip_mol 1]
+		    part $j pos [lindex $bead 0] [lindex $bead 1] [lindex $bead 2] type 30
+		    incr j
+		    # F bead
+		    set bead [lindex $hfip_mol 2]
+		    part $j pos [lindex $bead 0] [lindex $bead 1] [lindex $bead 2] type 31
+		    incr j
+		}
+	    }
 
 	    if {$set_interactions==1} {
 		# Add bonded interaction.
@@ -124,7 +147,7 @@ namespace eval peptideb {
 
 		# Add these interactions now that we have all the partners defined.
 		set j 0
-		for { set l 0 } { $l < [llength $coords] } { incr l } {    
+		for { set l 0 } { $l < [expr [llength $coords] - $peptideb::hfip_flag] } { incr l } {    
 		    set size [llength [lindex $coords $l]]
 		    for { set k 0 } { $k < [expr $size/4] } { incr k } {
 			set a_acid [lindex [lindex [lindex $peptideb::amino_acids $l] $k] 0]
@@ -190,14 +213,11 @@ namespace eval peptideb {
 			incr j
 			
 			# atom Cb
-			
 			# Subt LJ Cb-C
-			#		    part $j bond 13 [expr $j + 1]
-
+			#                       part $j bond 13 [expr $j + 1]
 			incr j
 			
 			# atom C
-			
 			# end of chain test
 			if { [expr $k*4+4] < $size } {
 			    # Covalent bond C N
@@ -219,6 +239,25 @@ namespace eval peptideb {
 			incr j
 		    }
 		}
+		# HFIP in the simulation?
+		if { $peptideb::hfip_flag } {
+		    # Loop over hfip molecules		
+		    set chain [lindex $coords [llength $peptideb::amino_acids]]
+		    foreach hfip_mol $chain {
+			if { [llength $hfip_mol] != 3 } {
+			    ::mmsg::err [namespace current] "An HFIP molecule should contain 3 beads!"
+			}
+			# F-Cc bond
+			part $j bond 30 [expr $j+1]
+			# Cc-F bond
+			part [expr $j+1] bond 30 [expr $j+2]
+			# F-Cc-F angle
+			part [expr $j+1] bond 31 $j [expr $j+2]
+			incr j 3
+		    }
+		}
+
+		
 
 		# Add non-bonded interaction.
 		set_nb_interactions $peptideb::nb_interactions
@@ -250,6 +289,25 @@ namespace eval peptideb {
 		set coords [choose_PBC_image $coords $com [setmd box_l]]
 
 		lappend final_coords $coords
+	    }
+	    # hfip
+	    if { $peptideb::hfip_flag } {
+		set hfip_coords ""
+		for { set k 0 } { $k < $peptideb::hfip_num_mol } { incr k } {
+		    set coords ""
+		    for { set kk 0 } { $kk < 3 } { incr kk } {
+			lappend coords [part $j print pos]
+			incr j
+		    }
+		    # Now calculate the COM of the hfip molecule $l with unfolded coordinates $coords
+		    set com [::peptideb::utils::center_of_mass $coords]
+		    # Fold the COM
+		    set com [fold_coords $com [setmd box_l]]
+		    set coords [choose_PBC_image $coords $com [setmd box_l]]
+		    #set hfip_coords [concat $hfip_coords $coords]
+		    lappend hfip_coords $coords
+		}	       
+		lappend final_coords $hfip_coords
 	    }
 	    return $final_coords
 	}

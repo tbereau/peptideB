@@ -67,8 +67,8 @@ set usage "Usage:
 \t-contact2 FILE1 FILE2    Calculates two nativity parameters corresponding to each topology file
 \t-resume \t\t resume the simulation where the last checkpoint is (depending on CONFIG_FILE information)
 \t-nopdb \t\t\t the simulation performs measurements and store them, but doesn't save any PDB
-\t-hpmedium \t\t simulation in a hydrophobic environment\n
-\t-randequilib \t\t choose dihedrals randomly from an equilibrated basin (no high free energy configurations)\n
+\t-hpmedium \t\t simulation in a hydrophobic environment
+\t-randequilib \t\t choose dihedrals randomly from an equilibrated basin (no high free energy configurations)
 "
 
 # ----------------------------------------------------------- #
@@ -98,6 +98,7 @@ namespace eval peptideb {
     set hp_medium 0
     set rand_equilib 0
     set 2nd_environment 0
+    set hfip_frac 0.
 
     # Read the amino acids sequence, plus other parameters. Sequence can be accessed by $amino_acids.
     source $paramsfile
@@ -292,6 +293,15 @@ namespace eval peptideb {
 	mmsg::send $this "Langevin thermostat has been turned on."
     }
 
+    # HFIP stuff
+    set hfip_flag 0
+    set hfip_num_mol 0
+    if { $hfip_frac > 0.} {
+	set hfip_flag 1
+	set hfip_num_mol [input::calculate_HFIP_vv_frac $hfip_frac]
+    }
+    
+
     # ---------------------------------------------------------- #
     # Allow children namespaces
     if { [catch {::mmsg::setnamespaces ":: [namespace children ::peptideb] [namespace children ::parallel_tempering]"} ] } {
@@ -446,12 +456,20 @@ namespace eval peptideb {
 	if { [info exists pdb_read]} {
 	    # Import the pdb file.
 	    set coords [input::import_pdb $pdb_read]
+	    # Add HFIP if turned on
+	    if { $hfip_flag } {
+		lappend coords [input::create_HFIP_molecules $hfip_frac]
+	    }
 	} else {
 	    # Calculate the cartesian coordinates from the sequence.
 	    set coords [input::read_AA_sequence $paramsfile]    
+	    # Add HFIP if turned on
+	    if { $hfip_flag } {
+		lappend coords [input::create_HFIP_molecules $hfip_frac]
+	    }
 	}
 
-	
+
 	# Data file for nativeness + energy
 	# Open file to be read
 	catch {exec mkdir "$peptideb::directory"}

@@ -15,7 +15,7 @@ package require peptideb::utils
 package provide peptideb 1.0.0
 
 namespace eval peptideb {
-    
+
     # --- List of parameters ------------------------ #
     
     # We always need pi. 
@@ -166,4 +166,7 @@ namespace eval peptideb {
 source [file join [file dirname [info script]] chain_sidechain.tcl   ]
 # Source the interactions. 
 source [file join [file dirname [info script]] chain_interactions.tcl]
-
+# Source the hfip parameter file
+source [file join [file dirname [info script]] hfip_parameters.tcl]
+# Source the hfip interaction file
+source [file join [file dirname [info script]] hfip_interactions.tcl]

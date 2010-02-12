@@ -43,8 +43,7 @@ namespace eval peptideb {
 		} else {
 		    return D
 		}
-	    }
-	    else {
+	    } else {
 		if { [lindex [lindex [lindex $peptideb::amino_acids $peptide] $position] 1] == "D" } {
 		    return D
 		} else {
