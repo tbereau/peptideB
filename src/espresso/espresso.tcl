@@ -127,7 +127,6 @@ namespace eval peptideb {
 		    } 
 		}
 		
-
 		# Integrate in ESPResSo
 		integrate $peptideb::int_steps
 		
