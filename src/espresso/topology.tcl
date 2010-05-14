@@ -77,7 +77,6 @@ namespace eval peptideb {
 		    ::mmsg::err [namespace current] "The chain should be of the form (N-Ca-Cb-C)."
 		}
 		
-
 		set jprime 0
 		for { set k 0 } { $k < [expr $size/4] } { incr k } {
 		    set a_acid [lindex [lindex [lindex $peptideb::amino_acids $l] $k] 0]
@@ -88,29 +87,49 @@ namespace eval peptideb {
 			# N atoms have type 0
 			part $j pos [lindex [lindex $chain $jprime] 0] [lindex [lindex $chain $jprime] 1]\
 			    [lindex [lindex $chain $jprime] 2] type 0
+			part $j molecule_id 0
 		    } else {
 			# Pro-N atoms have type 3
 			part $j pos [lindex [lindex $chain $jprime] 0] [lindex [lindex $chain $jprime] 1]\
 			    [lindex [lindex $chain $jprime] 2] type 3
+			part $j molecule_id 0
 		    }
 		    incr j
 		    incr jprime
 		    # Ca atoms have type 1
 		    part $j pos [lindex [lindex $chain $jprime] 0] [lindex [lindex $chain $jprime] 1]\
 			[lindex [lindex $chain $jprime] 2] type 1
+		    part $j molecule_id 0
 		    incr j
 		    incr jprime
 		    # Cb atoms have type ? - side chains have different types, depending on their hydrophobicity (see side_chain_hp)
-		    side_chain_hp $chain $j $jprime $a_acid
+		    side_chain_hp $chain $j $jprime $a_acid 0
 		    incr j
 		    incr jprime
 		    # C atoms have type 2
 		    part $j pos [lindex [lindex $chain $jprime] 0] [lindex [lindex $chain $jprime] 1]\
 			[lindex [lindex $chain $jprime] 2] type 2
+		    part $j molecule_id 0
 		    incr j
 		    incr jprime
 		}
+
+		if {[expr $l+1==$peptideb::virtual_com] && [expr $peptideb::virtual_com==1]} {
+		    for { set jflag 0 } { $jflag < $j } { incr jflag } {
+			part $jflag molecule_id 0
+		    }
+		    part $j pos 0 0 0 type 99
+		    part $j molecule_id 0
+		    part $j virtual 1
+		    # Right now, crash the simulation if there's more than one peptide. 
+		    # FIX that later
+		    if { [expr [llength $coords] - $peptideb::hfip_flag]> 1} {
+			::mmsg::send [namespace current] "Virtual site only supports simulations of one peptide."
+			exit 1		       
+		    }
+		}
 	    }
+
 	    # Do we have hfip in the system?
 	    if { $peptideb::hfip_flag } {
 		# Loop over hfip molecules		
@@ -134,6 +153,14 @@ namespace eval peptideb {
 		}
 	    }
 
+	    # Add virtual site for peptide $peptideb::virtual_com ('1' is the first peptide)	    
+	    if { [expr $peptideb::virtual_com > 0] } {
+		set chain [lindex $coords 0]
+		set size [llength $chain]
+		analyze set chains 0 1 [expr $size+1]
+		incr j
+	    }
+	    
 	    if {$set_interactions==1} {
 		# Add bonded interaction.
 		set_bonded_interactions $peptideb::bonded_parms
@@ -209,6 +236,10 @@ namespace eval peptideb {
 			    part $j bond 12 [expr $j - 1] [expr $j + 2] [expr $j + 1]
 			} else {
 			    part $j bond 12 [expr $j - 1] [expr $j + 1] [expr $j + 2]
+			}
+			# Hat potential
+			if { $peptideb::hat_potential > 0. && $peptideb::HB_bilayer_z0 > 0.} {
+			    part $j bond 17 
 			}
 			incr j
 			
@@ -361,16 +392,18 @@ namespace eval peptideb {
 	#     see create_topo for more information.
 	#   - aa is the amino acid. It can be either a 1- or 
 	#     3-letter code. 
+	#   - molecule ID
 	# Returns : nothing. It appends the list of interactions in
 	# Espresso.
 	# Beads for side chain are identified from 10 to 29.
-	proc side_chain_hp { chain j jprime aa_type } {
+	proc side_chain_hp { chain j jprime aa_type mol_count} {
 	    set index 10
 	    foreach name $peptideb::3letter_list {
 		set name [string tolower $name]
 		if { $aa_type == $name } {
 		    part $j pos [lindex [lindex $chain $jprime] 0] [lindex [lindex $chain $jprime] 1]\
 			[lindex [lindex $chain $jprime] 2] type $index q [charge $name]
+		    part $j molecule_id $mol_count
 		}
 		incr index
 	    }

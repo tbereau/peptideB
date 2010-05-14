@@ -22,7 +22,8 @@ namespace eval peptideb {
 
     # --------------- Interactions --------------------- #
     # Bonded interactions
-    
+
+    # Pairs
     # bond 0 is between N and Ca
     lappend bonded_parms [list 0 harmonic $k_bond $bond_NCa]
     # bonds 15 for GLY and 16 for non-GLY - between Ca and Cb
@@ -185,7 +186,14 @@ namespace eval peptideb {
 				     $hbond_NC $ljangle_cut 1 -1 1 -2]
     }
     
+    # Self interaction - hat potential
+    if {$hat_potential > 0. && $HB_bilayer_dz > 0.} {
+	lappend bonded_parms \
+	    [list 17 hat $hat_potential \
+		 $HB_bilayer_z0 $HB_bilayer_dz $HB_bilayer_kappa]
+    }	
     
+
     # Electrostatics - Debye-Hueckel potential
     # Turn on if it has been set in the parameter file
     if { [info exists charges] && $charges=="on"} {

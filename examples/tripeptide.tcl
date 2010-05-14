@@ -50,10 +50,9 @@ set warm_steps 100
 # The number of times to call warmup
 set warm_n_times 20
 # The number of steps to integrate with each call to integrate
-set int_steps 1000
+set int_steps 10
 # The number of times to call integrate
 set int_n_times 5000
-
 
 set replica_temps { 1.0 1.2 1.4 1.6 }
 # number of times to integrate between each replica MC step
@@ -61,7 +60,8 @@ set replica_timestep 100
 # number of replica exchange rounds
 set replica_rounds 5000
 # frequency at which pdb files are written
-set pdb_freq 10
+set pdb_freq 100
+
 
 
 

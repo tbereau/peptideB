@@ -63,6 +63,10 @@ namespace eval peptideb {
 				set CoM [center_of_mass $chain]
 				puts $f "\t[lindex $CoM 2]" nonewline
 			    }
+			    variable ::peptideb::hat_potential
+			    if { $peptideb::hat_potential > 0.} {
+				puts $f "\t[analyze energy bonded 17]" nonewline
+			    }
 			}
 			# 
 			# RAGTIME - HELICITY

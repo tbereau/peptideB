@@ -150,6 +150,10 @@ namespace eval peptideb {
     if {![info exists HB_bilayer_kappa]} {
 	variable HB_bilayer_kappa 1. }
 
+    # Hat potential to compensate for bilayer
+    if {![info exists hat_potential]} {
+	variable hat_potential 0.}
+
     # Electrostatics - Debye-Hueckel
     variable dh_bjerrum   7.; # in units of \sigma
     variable dh_kappa  0.125; # 1/\kappa is 8\sigma

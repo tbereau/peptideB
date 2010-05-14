@@ -69,6 +69,7 @@ set usage "Usage:
 \t-nopdb \t\t\t the simulation performs measurements and store them, but doesn't save any PDB
 \t-hpmedium \t\t simulation in a hydrophobic environment
 \t-randequilib \t\t choose dihedrals randomly from an equilibrated basin (no high free energy configurations)
+\t-virtual_com N \t\t add virtual site: center of mass of peptide number N (starting from 1)
 "
 
 # ----------------------------------------------------------- #
@@ -99,6 +100,7 @@ namespace eval peptideb {
     set rand_equilib 0
     set 2nd_environment 0
     set hfip_frac 0.
+    set virtual_com -1
 
     # Read the amino acids sequence, plus other parameters. Sequence can be accessed by $amino_acids.
     source $paramsfile
@@ -140,9 +142,12 @@ namespace eval peptideb {
 		    close $file_hn
 		    incr k
 		} else {
+		    if { ![info exists tcp_port] } {
+			set tcp_port 12000
+		    }
 		    # Create file for hostname with its port
 		    set file_hn [open "hostfile" w]
-		    puts $file_hn "[exec hostname] 12000"
+		    puts $file_hn "[exec hostname] $tcp_port"
 		    close $file_hn
 		    # delete any allthere file
 		    catch { exec rm -f allthere_$::paramsfile }
@@ -159,9 +164,12 @@ namespace eval peptideb {
 		    close $file_hn
 		    incr k
 		} else {
+		    if { ![info exists tcp_port] } {
+			set tcp_port 12000
+		    }
 		    # Create file for hostname
 		    set file_hn [open "hostfile" w]
-		    puts $file_hn "[exec hostname] 12000"
+		    puts $file_hn "[exec hostname] $tcp_port"
 		    close $file_hn
 		    # delete any allthere file
 		    catch { exec rm -f allthere_$::paramsfile }
@@ -242,6 +250,10 @@ namespace eval peptideb {
 	    } "-randequilib" {
 		set rand_equilib 1
 		::mmsg::send $this "Dihedrals will be chosen randomly from an equilibrated basin (no high free energy configs.)."
+	    } "-virtual_com" {
+		set virtual_com [lindex $argv [expr $k+1]]
+		::mmsg::send $this "Virtual site will be added at the center of mass of the peptide"
+		incr k
 	    } default {
 		mmsg::err $this "Wrong argument [lindex $argv $k] -- exiting."
 	    }
@@ -300,8 +312,8 @@ namespace eval peptideb {
 	set hfip_flag 1
 	set hfip_num_mol [input::calculate_HFIP_vv_frac $hfip_frac]
     }
-    
 
+    
     # ---------------------------------------------------------- #
     # Allow children namespaces
     if { [catch {::mmsg::setnamespaces ":: [namespace children ::peptideb] [namespace children ::parallel_tempering]"} ] } {
@@ -331,10 +343,6 @@ namespace eval peptideb {
 
 	# Copy parameter file in folder
 	catch {exec cp "$paramsfile" "$peptideb::directory/$paramsfile"}
-	
-	if { ![info exists tcp_port] } {
-	    set tcp_port 12000
-	}
 	
 	::mmsg::send $this "Starting parallel tempering at temperatures : $replica_temps"
 	
