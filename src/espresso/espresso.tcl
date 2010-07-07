@@ -78,7 +78,7 @@ namespace eval peptideb {
 
 	    # Warmup process
 	    ::peptideb::utils::warmup $peptideb::warm_steps $peptideb::warm_n_times
-	    
+
 
 	    # Write the psf file after adding chemical resolution
 	    if { [catch {glob -directory $peptideb::directory $peptideb::PDB_file.vmd.psf} ] } {
