@@ -17,6 +17,7 @@ namespace eval peptideb {
 	# Returns an array of coordinates of all the beads.
 	# Create the sequence of amino acid.
 	proc import_pdb {file {exactCB 0}} {
+	    set peptideb::frozen ""
 	    set peptideb::amino_acids ""
 	    set return_value ""
 	    # Return variable
@@ -85,6 +86,7 @@ namespace eval peptideb {
 				set proj_angle [projected_angle $peptideb::angleR_CbCaC $peptideb::angleR_NCaCb $peptideb::angleR_NCaC]
 				set phiCb [phi_isomer $phi L $proj_angle]
 				set theta [expr $peptideb::pi - $peptideb::angleR_NCaCb]
+
 				if { $name == "GLY" } { set R $peptideb::bondCaCb_GLY } else { set R $peptideb::bondCaCb_XXX }
 				
 				set Cb_vector [sphericalcoords $R $theta $phiCb]
@@ -105,6 +107,13 @@ namespace eval peptideb {
 				lappend final_coords $CA_atom
 				lappend final_coords $CB_atom
 				lappend final_coords $C_atom
+				if { $name == "GLY" } { 
+				    if { [lindex $data2 9] == "0.00" } {
+					lappend peptideb::frozen 1
+				    } else {
+					lappend peptideb::frozen 0
+				    }
+				}
 			    } else {
 				::mmsg::err [namespace current] "Problem in parsing $file. Can't recover all atoms."
 			    }
@@ -144,12 +153,32 @@ namespace eval peptideb {
 		    set atom_type [lindex $data 2]
 		    switch $atom_type "N" {
 			set N_atom "[lindex $data 6] [lindex $data 7] [lindex $data 8]"
+			if { [lindex $data 9] == "0.00" } {
+			    lappend peptideb::frozen 1
+			} else {
+			    lappend peptideb::frozen 0
+			}
 		    } "CA" { 
 			set CA_atom "[lindex $data 6] [lindex $data 7] [lindex $data 8]"
+			if { [lindex $data 9] == "0.00" } {
+			    lappend peptideb::frozen 1
+			} else {
+			    lappend peptideb::frozen 0
+			}
 		    } "C" { 
 			set C_atom "[lindex $data 6] [lindex $data 7] [lindex $data 8]"
+			if { [lindex $data 9] == "0.00" } {
+			    lappend peptideb::frozen 1
+			} else {
+			    lappend peptideb::frozen 0
+			}
 		    } "CB" {
 			set CB_atom "[lindex $data 6] [lindex $data 7] [lindex $data 8]"
+			if { [lindex $data 9] == "0.00" } {
+			    lappend peptideb::frozen 1
+			} else {
+			    lappend peptideb::frozen 0
+			}			
 		    }
 		}
 		

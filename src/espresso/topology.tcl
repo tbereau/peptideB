@@ -160,7 +160,21 @@ namespace eval peptideb {
 		analyze set chains 0 1 [expr $size+1]
 		incr j
 	    }
-	    
+
+	    # Fix certain atoms
+	    if { $peptideb::freeze == 1 } {
+		set index_fix 0
+		for { set l 0 } { $l < [expr [llength $coords] - $peptideb::hfip_flag]} { incr l } {
+		    set size [llength [lindex $coords $l]]
+		    for { set k 0} { $k < $size } { incr k } {
+			if { [lindex $peptideb::frozen $index_fix] == 1 } {
+			    part $index_fix fix 1 1 1
+			}
+			incr index_fix
+		    }
+		}		
+	    }
+
 	    if {$set_interactions==1} {
 		# Add bonded interaction.
 		set_bonded_interactions $peptideb::bonded_parms

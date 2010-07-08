@@ -70,6 +70,7 @@ set usage "Usage:
 \t-hpmedium \t\t simulation in a hydrophobic environment
 \t-randequilib \t\t choose dihedrals randomly from an equilibrated basin (no high free energy configurations)
 \t-virtual_com N \t\t add virtual site: center of mass of peptide number N (starting from 1)
+\t-freeze \t\t freeze atoms that have 0.00 occupancy in input PDB
 "
 
 # ----------------------------------------------------------- #
@@ -101,6 +102,8 @@ namespace eval peptideb {
     set 2nd_environment 0
     set hfip_frac 0.
     set virtual_com -1
+    set freeze 0
+    set frozen ""
 
     # Read the amino acids sequence, plus other parameters. Sequence can be accessed by $amino_acids.
     source $paramsfile
@@ -254,6 +257,9 @@ namespace eval peptideb {
 		set virtual_com [lindex $argv [expr $k+1]]
 		::mmsg::send $this "Virtual site will be added at the center of mass of the peptide"
 		incr k
+	    } "-freeze" {
+		set freeze 1
+		::mmsg::send $this "Atoms with 0.00 occupancy will be fixed"
 	    } default {
 		mmsg::err $this "Wrong argument [lindex $argv $k] -- exiting."
 	    }
