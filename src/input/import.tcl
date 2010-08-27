@@ -132,6 +132,7 @@ namespace eval peptideb {
 			# of coordinates to recreate the whole peptide, and start an empty set.
 			if {$peptideID!=[lindex $data 11]} {
 			    set peptideID [lindex $data 11]
+			    set index_AA_first [lindex $data 5]
 			    # Update coordinates only if we have a non-empty array
 			    if {$final_coords!=""} {
 				lappend return_value $final_coords
@@ -180,6 +181,7 @@ namespace eval peptideb {
 			    lappend peptideb::frozen 0
 			}			
 		    }
+		    
 		}
 		
 
