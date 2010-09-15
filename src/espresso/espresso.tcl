@@ -109,7 +109,6 @@ namespace eval peptideb {
 			    # Add chemical resolution and output to PDB
 			    set outputcoords [::peptideb::input::addresolution $coords]
 			    ::peptideb::output::pdb $outputcoords
-			    incr peptideb::filenumber
 			}
 		    }
 		    
@@ -118,6 +117,12 @@ namespace eval peptideb {
 		    }
 		    
 		    ::peptideb::utils::append_obs $coords "$peptideb::directory/observables.dat" $current_energy
+
+		    if {($peptideb::nopdb == 0 || [info exists peptideb::ragtime_letter]
+                        || $peptideb::contact1==1 || $peptideb::contact2==1) && $pdb_flag==1} {
+			incr peptideb::filenumber
+		    }
+		    
 		    
 		    # In case the user doesn't want any PDB stored but the analysis required it
 		    if {$peptideb::nopdb == 1 && ([info exists peptideb::ragtime_letter]
