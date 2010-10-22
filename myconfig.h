@@ -36,7 +36,7 @@
 #define COMFIXED
 #define MOLFORCES
 /* #define BOND_CONSTRAINT */
-#define MODES
+/* #define MODES */
 
 /**********************************************************************/
 /*                        integrator features                         */
@@ -56,12 +56,12 @@
 /* #define BMHTF_NACL */
 /* #define LJ_WARN_WHEN_CLOSE */
 /* #define MORSE */
-#define LJCOS
-#define LJCOS2
+/* #define LJCOS */
+/* #define LJCOS2 */
 #define LJ_ANGLE
 #define LENNARD_JONES_GENERIC
 /* #define BUCKINGHAM */
-#define SOFT_SPHERE
+/* #define SOFT_SPHERE */
 /* #define INTER_DPD */
 /* #define INTER_RF */
 
