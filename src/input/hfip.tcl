@@ -9,9 +9,10 @@ namespace eval peptideb {
     namespace eval input {
 	# Given a volume fraction of HFIP frac, determine the number of HFIP
 	# molecules to add. Return the number of HFIP molecules to be added.
-	proc calculate_HFIP_vv_frac {frac} {
-	    # Change that!
-	    return 2
+	proc calculate_HFIP_vv_frac {frac l_x l_y l_z} {
+	    set V_hfip 186.0
+	    set N_hfip [expr {int($frac*$l_x*$l_y*$l_z/$V_hfip)}]
+	    return $N_hfip
 	}
 
 	# Add hfip molecules randomly in the simulation box. Return a list of

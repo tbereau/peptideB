@@ -37,13 +37,13 @@ namespace eval peptideb {
     # ** HFIP-HFIP ** 
     # interaction C  and C
     lappend nb_interactions \
-	[list 30 30 lennard-jones $ifp_epsC [expr 2.*$ifp_sigmaC]  [expr $cut_factor*2.*$ifp_sigmaC ] $lj_shift $ljoffset]
+	[list 30 30 lennard-jones $ifp_epsC [expr 2.*$ifp_sigmaC] $ljhp_cut 0.00 $ljoffset]
     # interaction F  and F
     lappend nb_interactions \
-	[list 31 31 lennard-jones $ifp_epsF [expr 2.*$ifp_sigmaF]  [expr $cut_factor*2.*$ifp_sigmaF ] $lj_shift $ljoffset]
+	[list 31 31 lennard-jones $ifp_epsF [expr 2.*$ifp_sigmaF] $ljhp_cut 0.00 $ljoffset]
     # interaction C  and F
     lappend nb_interactions \
-	[list 30 31 lennard-jones $ifp_lb_e_CF $ifp_lb_s_CF   [expr $cut_factor*$ifp_lb_s_CF  ] $lj_shift $ljoffset]
+	[list 30 31 lennard-jones $ifp_lb_e_CF $ifp_lb_s_CF $ljhp_cut 0.00 $ljoffset]
 
     # ** HFIP-peptide **   
     # interaction N  and ifpC

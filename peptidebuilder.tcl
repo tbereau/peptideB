@@ -316,7 +316,7 @@ namespace eval peptideb {
     set hfip_num_mol 0
     if { $hfip_frac > 0.} {
 	set hfip_flag 1
-	set hfip_num_mol [input::calculate_HFIP_vv_frac $hfip_frac]
+	set hfip_num_mol [input::calculate_HFIP_vv_frac $hfip_frac $length_x $length_y $length_z]
     }
 
     
