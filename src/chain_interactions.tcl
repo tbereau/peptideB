@@ -161,7 +161,7 @@ namespace eval peptideb {
 				# LJ - attractive part
 				lappend nb_interactions \
 					[list $index $index2 lennard-jones $epsilon $sigma $ljhp_cut \
-					     [calc_lj_shift $sigma $ljhp_cut]$ljoffset 0. [expr $cut_factor*$sigma]]
+					     [calc_lj_shift $sigma $ljhp_cut] $ljoffset 0. [expr $cut_factor*$sigma]]
 			}
 			incr index2
 	    }
