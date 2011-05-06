@@ -19,12 +19,12 @@ namespace eval peptideb {
 
     # Bead sizes
     # For homogeneity, provide radius rather than diameter
-    variable ifp_sigmaC  [expr 3.0/2.]; 
-    variable ifp_sigmaF  [expr 5.0/2.];
+    variable ifp_sigmaC  [expr 4.2/2.]; 
+    variable ifp_sigmaF  [expr 4.5/2.];
 
     # Interaction strengths
-    variable ifp_epsC    0.01;
-    variable ifp_epsF    0.55;
+    variable ifp_epsC    0.30;
+    variable ifp_epsF    0.72;
 
     # Lorentz-Berthelot mixing rules
     variable ifp_lb_s_CF  [utils::sum $ifp_sigmaC $ifp_sigmaF];
