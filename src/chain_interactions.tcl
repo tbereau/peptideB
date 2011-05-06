@@ -65,7 +65,7 @@ namespace eval peptideb {
 
 
     # Subtract Lennard-Jones for bonded partners    
-    lappend bonded_parms [list 13 subt_lj 0 $max_length]
+    #lappend bonded_parms [list 13 subt_lj 0 $max_length]
     
     
     
@@ -77,6 +77,8 @@ namespace eval peptideb {
     #  1         Ca
     #  2          C
     #  3  Proline N (no Hbond)
+    #  4 terminal-N
+    #  5 terminal-C
     #  10-29     Sc
     
     # ** Backbone beads only ** 
@@ -110,8 +112,34 @@ namespace eval peptideb {
     # interaction Pro-N and C
     lappend nb_interactions \
 	[list 3 2 lennard-jones $lj_eps $lb_NC   [expr $cut_factor*$lb_NC  ] $lj_shift $ljoffset]
-
-
+    # interaction term-N and N
+    lappend nb_interactions \
+	[list 4 0 lennard-jones $lj_eps [expr 2.*$rvdw_N]  [expr $cut_factor*2.*$rvdw_N ] $lj_shift $ljoffset]
+    # interaction term-N and Ca
+    lappend nb_interactions \
+        [list 4 1 lennard-jones $lj_eps $lb_NCa  [expr $cut_factor*$lb_NCa ] $lj_shift $ljoffset]
+    # interaction term-N and C
+    lappend nb_interactions \
+        [list 4 2 lennard-jones $lj_eps $lb_NC   [expr $cut_factor*$lb_NC  ] $lj_shift $ljoffset]
+    # interaction term-N and Pro-N
+    lappend nb_interactions \
+        [list 4 3 lennard-jones $lj_eps [expr 2.*$rvdw_N]  [expr $cut_factor*2.*$rvdw_N ] $lj_shift $ljoffset]
+    # interaction term-N and term-C
+    lappend nb_interactions \
+        [list 4 5 lennard-jones $lj_eps $lb_NC   [expr $cut_factor*$lb_NC  ] $lj_shift $ljoffset]
+    # interaction term-C and N
+    lappend nb_interactions \
+        [list 0 5 lennard-jones $lj_eps $lb_NC   [expr $cut_factor*$lb_NC  ] $lj_shift $ljoffset]
+    # interaction term-C and Ca
+    lappend nb_interactions \
+        [list 1 5 lennard-jones $lj_eps $lb_CaC  [expr $cut_factor*$lb_CaC ] $lj_shift $ljoffset]
+    # interaction term-C and C
+    lappend nb_interactions \
+        [list 2 5 lennard-jones $lj_eps [expr 2.*$rvdw_C]  [expr $cut_factor*2.*$rvdw_C ] $lj_shift $ljoffset]
+    # interaction term-C and Pro-N
+    lappend nb_interactions \
+        [list 3 5 lennard-jones $lj_eps $lb_NC   [expr $cut_factor*$lb_NC  ] $lj_shift $ljoffset]
+ 
 
 
     # ** Now with sidechains **
@@ -140,6 +168,14 @@ namespace eval peptideb {
 	    set sigma [utils::sum $rvdw_N $rvdw_SC]
 	    lappend nb_interactions \
 			[list 3 $index lennard-jones $lj_eps $sigma [expr $cut_factor *$sigma] $lj_shift $ljoffset]
+	    # interaction term-N and Sc
+            set sigma [utils::sum $rvdw_N $rvdw_SC]
+            lappend nb_interactions \
+		[list 4 $index lennard-jones $lj_eps $sigma [expr $cut_factor *$sigma] $lj_shift $ljoffset]
+	    # interaction term-C and Sc
+	    set sigma [utils::sum $rvdw_C $rvdw_SC]
+            lappend nb_interactions \
+		[list 5 $index lennard-jones $lj_eps $sigma [expr $cut_factor*$sigma] $lj_shift $ljoffset]
 	    # interaction Sc and Sc - Matrix of coefficients
 	    set index2 10
 	    foreach partner $3letter_list {

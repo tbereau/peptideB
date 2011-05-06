@@ -103,7 +103,7 @@ namespace eval peptideb {
     variable k_imp_dih     [expr $rescale*17.] ; # From Takada
     
     # Subtract Lennard-Jones for bonded partners
-    variable max_length 8.0
+    #variable max_length 5.0
     
     # Non-bonded interactions
     # Useful Parameters

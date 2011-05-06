@@ -82,8 +82,12 @@ namespace eval peptideb {
 		    set a_acid [lindex [lindex [lindex $peptideb::amino_acids $l] $k] 0]
 		    set a_acid [aa_code_hp $a_acid]
 
-		    # Two types of N beads : regular ones, and proline ones which do not Hbond.
-		    if {$a_acid != "pro"} {
+		    # Three types of N beads : terminal-, regular ones, and proline ones which do not Hbond.
+		    if { $k == 0 } {
+			part $j pos [lindex [lindex $chain $jprime] 0] [lindex [lindex $chain $jprime] 1]\
+			    [lindex [lindex $chain $jprime] 2] type 4
+			part $j molecule_id 0
+		    } elseif {$a_acid != "pro"} {
 			# N atoms have type 0
 			part $j pos [lindex [lindex $chain $jprime] 0] [lindex [lindex $chain $jprime] 1]\
 			    [lindex [lindex $chain $jprime] 2] type 0
@@ -106,10 +110,16 @@ namespace eval peptideb {
 		    side_chain_hp $chain $j $jprime $a_acid 0
 		    incr j
 		    incr jprime
-		    # C atoms have type 2
-		    part $j pos [lindex [lindex $chain $jprime] 0] [lindex [lindex $chain $jprime] 1]\
-			[lindex [lindex $chain $jprime] 2] type 2
-		    part $j molecule_id 0
+		    # C atoms have type 2 inside the chain and type 5 at the end
+		    if { $k == [expr $size/4 - 1] } {
+			part $j pos [lindex [lindex $chain $jprime] 0] [lindex [lindex $chain $jprime] 1]\
+			    [lindex [lindex $chain $jprime] 2] type 5
+			part $j molecule_id 0
+		    } else {
+			part $j pos [lindex [lindex $chain $jprime] 0] [lindex [lindex $chain $jprime] 1]\
+			    [lindex [lindex $chain $jprime] 2] type 2
+			part $j molecule_id 0
+		    }
 		    incr j
 		    incr jprime
 		}
