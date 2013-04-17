@@ -22,6 +22,11 @@ There are two main outputs to the program :
 
 peptideB is able to combine these two characteristics by applying MD simulations on a peptide and output it in VMD as a function of simulation time.
 
+Usage
+-----
+
+peptideB's documentation can be found on its [Wiki page](https://github.com/tbereau/peptideB/wiki).
+
 
 [jpc]: http://link.aip.org/link/doi/10.1063/1.3152842
 [![githalytics.com alpha](https://cruel-carlota.pagodabox.com/1adc9e622abb43b177d23674afdc5238 "githalytics.com")](http://githalytics.com/tbereau/peptideB)
