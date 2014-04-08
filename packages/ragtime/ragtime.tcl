@@ -64,7 +64,7 @@ variable hbonds_energy_switch 0
 variable hbonds_energy ""
 variable verbose 0
 variable alphabet {A B C D E F G H I J K L M \
-		       N O P Q R S T U V W X Y Z}
+                       N O P Q R S T U V W X Y Z}
 variable number_aa ""
 variable CA_coords ""
 variable CA_threshold 9.0;# contact distance between residues [in Angstrom]
@@ -77,33 +77,33 @@ variable 3agg [list 0 0 0]
 
 if {$argc>=1} {
     for { set k 0 } { $k < $argc } { incr k } {
-	if {[string index [lindex $argv $k] 0]=="-"} {
-	    for { set j 1 } { $j < [string length [lindex $argv $k]] } { incr j } {
-		switch -- [string index [lindex $argv $k] $j] "a" {
-		    set a_conf 1
-		} "b" {
-		    set b_PBC 1
-		    set b_PBCsize [string range [lindex $argv $k] 2 end]
-		} "c" {
-		    set c_switch 1
-		} "e" {
-		    set e_conf 1
-		} "f" {
-		    set force 1
-		} "h" {
-		    puts $usage
-		    exit
-		} "o" {
-		    set o_switch 1
-		} "y" {
-		    set hbonds_energy_switch 1
-		} "s" { 
-		    set s_seq 1
-		} "v" {
-		    set verbose 1
-		}
-	    }
-	}
+        if {[string index [lindex $argv $k] 0]=="-"} {
+            for { set j 1 } { $j < [string length [lindex $argv $k]] } { incr j } {
+                switch -- [string index [lindex $argv $k] $j] "a" {
+                    set a_conf 1
+                } "b" {
+                    set b_PBC 1
+                    set b_PBCsize [string range [lindex $argv $k] 2 end]
+                } "c" {
+                    set c_switch 1
+                } "e" {
+                    set e_conf 1
+                } "f" {
+                    set force 1
+                } "h" {
+                    puts $usage
+                    exit
+                } "o" {
+                    set o_switch 1
+                } "y" {
+                    set hbonds_energy_switch 1
+                } "s" { 
+                    set s_seq 1
+                } "v" {
+                    set verbose 1
+                }
+            }
+        }
     }
 }
 
@@ -112,59 +112,59 @@ set res_array ""
 #########################################
 foreach pdb $argv {
     if {[string index $pdb 0]!="-"} {
-	# (re)initialize variable
-	set failed 0
-	# Call STRIDE and save output to file
-	call_stride $pdb
-	if {$failed==0} {
-	    # Read PDB line by line to determine the number of
-	    # amino acids per chain. Also, store CA positions.
-	    read_pdb $pdb
-	    # Optional hydrogen bond energy analysis.
-	    if {$hbonds_energy_switch==1} {
-		lappend hbonds_energy [hbond_energy $pdb]
-	    }
-	    # Contact order parameter
-	    if {$o_switch == 1} {
-		lappend o_values [contact_order_parameter]
-	    }
-	    # Read file into memory and delete file
-	    set data [keep_only_beta $pdb]
-	    # Create (or append) an array containing the STRIDE data
-	    set res_array [create_res_array [lindex $data 2] $index $res_array]
-	    
-	    if {$c_switch==1} {
-		cluster_analysis [lindex $data 0]
-	    }
+        # (re)initialize variable
+        set failed 0
+        # Call STRIDE and save output to file
+        call_stride $pdb
+        if {$failed==0} {
+            # Read PDB line by line to determine the number of
+            # amino acids per chain. Also, store CA positions.
+            read_pdb $pdb
+            # Optional hydrogen bond energy analysis.
+            if {$hbonds_energy_switch==1} {
+                lappend hbonds_energy [hbond_energy $pdb]
+            }
+            # Contact order parameter
+            if {$o_switch == 1} {
+                lappend o_values [contact_order_parameter]
+            }
+            # Read file into memory and delete file
+            set data [keep_only_beta $pdb]
+            # Create (or append) an array containing the STRIDE data
+            set res_array [create_res_array [lindex $data 2] $index $res_array]
+            
+            if {$c_switch==1} {
+                cluster_analysis [lindex $data 0]
+            }
 
-	    # Analyze hydrogen bonds from STRIDE output and throw irrelevant ones
-	    set hbonds [analyze_hbonds $data]
-	    # Analyzes extended conformations and assign
-	    # Antiparallel or Parallel sheet
-	    set res_array [sheet_analysis $hbonds $res_array $index $pdb]
-	    
-	    # Store data in array
-	    array set residue $res_array
-	    
-	    incr index
-	}
+            # Analyze hydrogen bonds from STRIDE output and throw irrelevant ones
+            set hbonds [analyze_hbonds $data]
+            # Analyzes extended conformations and assign
+            # Antiparallel or Parallel sheet
+            set res_array [sheet_analysis $hbonds $res_array $index $pdb]
+            
+            # Store data in array
+            array set residue $res_array
+            
+            incr index
+        }
     }
 }
 
 if {$index>0} {
     if {$verbose} {
-	# Display array
-	parray residue
+        # Display array
+        parray residue
     }
 
     if {$o_switch == 1} {
-	set o_average 0.
-	foreach value $o_values {
-	    set o_average [expr $o_average + $value]
-	}
-	set o_average [expr $o_average / [llength $o_values]]
-	puts "Contact order parameter:\t $o_average"
-	puts ""
+        set o_average 0.
+        foreach value $o_values {
+            set o_average [expr $o_average + $value]
+        }
+        set o_average [expr $o_average / [llength $o_values]]
+        puts "Contact order parameter:\t $o_average"
+        puts ""
     }
     # Store number of appearing A, P, E, and H
     set confs [conf_counting [array get residue]]
