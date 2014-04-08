@@ -188,11 +188,11 @@ namespace eval peptideb {
 				# Multiply epsilon by the side chain coupling
 				set epsilon [expr $epsilon * $hp_coupling]
 				# WCA shift
-				set eps_rel [expr .25*(1-$epsilon/$lj_hp)]
+				set eps_rel [expr 1-$epsilon/$lj_hp]
 
 				# WCA - repulsive part (us lj-gen because we can't have lennard-jones twice!)
 				lappend nb_interactions \
-					[list $index $index2 lj-gen $lj_hp $sigma [expr $cut_factor*$sigma] $eps_rel $ljoffset 12 6 1.0 1.0]
+					[list $index $index2 lj-gen $lj_hp $sigma [expr $cut_factor*$sigma] $eps_rel $ljoffset 12 6 4.0 4.0]
 
 				# LJ - attractive part
 				lappend nb_interactions \
