@@ -55,12 +55,13 @@ namespace eval peptideb {
 		    set data [read_line $data]
 		    
 		    # Check that $index_AA is the same as the AA we're reading
+		    puts "data5 [lindex $data 5]"
 		    if {$index_AA != [lindex $data 5]} {
 			
 			    
 			# Now if it's not the first AA, we can update the coordinates of
 			# the last AA.
-			if { [info exists index_AA_first] } {
+			if { [info exists index_AA_first] && $index_AA_first != "" } {
 			    # Build the side chain
 			    set name [lindex $temp_AA [expr $index_AA - $index_AA_first]]
 			    # Check that N, CA, and C do exist !
@@ -70,9 +71,9 @@ namespace eval peptideb {
 			    }
 			    # For the exact reading, we need all N, CA, C, and CB.
 			    if { $exactCB == 1 } {
-				if { ![info exists CB_atom] } {
-				    ::mmsg::err [namespace current] "Can't parse Carbon beta during side chain reconstruction."
-				}
+					if { ![info exists CB_atom] } {
+					    ::mmsg::err [namespace current] "Can't parse Carbon beta during side chain reconstruction."
+					}
 			    } else {
 				# If it's the first amino acid, use random phi, otherwise
 				# calculate it.
@@ -103,17 +104,17 @@ namespace eval peptideb {
 			    }
 
 			    if { [info exists N_atom] && [info exists CA_atom] && [info exists C_atom]} {
-				lappend final_coords $N_atom
-				lappend final_coords $CA_atom
-				lappend final_coords $CB_atom
-				lappend final_coords $C_atom
-				if { $name == "GLY" } { 
-				    if { [lindex $data2 9] == "0.00" } {
-					lappend peptideb::frozen 1
-				    } else {
-					lappend peptideb::frozen 0
-				    }
-				}
+					lappend final_coords $N_atom
+					lappend final_coords $CA_atom
+					lappend final_coords $CB_atom
+					lappend final_coords $C_atom
+					if { $name == "GLY" } { 
+					    if { [lindex $data2 9] == "0.00" } {
+						lappend peptideb::frozen 1
+					    } else {
+						lappend peptideb::frozen 0
+					    }
+					}
 			    } else {
 				::mmsg::err [namespace current] "Problem in parsing $file. Can't recover all atoms."
 			    }
@@ -121,8 +122,7 @@ namespace eval peptideb {
 			    unset CA_atom
 			    unset CB_atom
 			    unset C_atom
-			}
-			if { ![info exists index_AA_first]} {
+			} else {
 			    set index_AA_first [lindex $data 5]
 			}
 			set index_AA [lindex $data 5]
