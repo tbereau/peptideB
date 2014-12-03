@@ -55,7 +55,6 @@ namespace eval peptideb {
 		    set data [read_line $data]
 		    
 		    # Check that $index_AA is the same as the AA we're reading
-		    puts "data5 [lindex $data 5]"
 		    if {$index_AA != [lindex $data 5]} {
 			
 			    
