@@ -17,20 +17,20 @@ package provide peptideb 1.0.0
 namespace eval peptideb {
 
     # --- List of parameters ------------------------ #
-    
-    # We always need pi. 
+
+    # We always need pi.
     variable pi 3.14159265358979323846
-    
+
     # Van der Waals radii  (Takada AA - UA)
     variable rvdw_N    1.45;    #1.32 - 1.65
     variable rvdw_Ca   1.85;    #1.48 - 1.85
     variable rvdw_C    1.75;    #1.70 - 2.00
     # Lorentz-Berthelot mixing rules
-    variable lb_NCa  [utils::sum $rvdw_N $rvdw_Ca] 
-    variable lb_NC   [utils::sum $rvdw_N $rvdw_C ] 
-    variable lb_CaC  [utils::sum $rvdw_Ca $rvdw_C ] 
-    
-    
+    variable lb_NCa  [utils::sum $rvdw_N $rvdw_Ca]
+    variable lb_NC   [utils::sum $rvdw_N $rvdw_C ]
+    variable lb_CaC  [utils::sum $rvdw_Ca $rvdw_C ]
+
+
     # Bonds (in A). Read from N (start of AA) to C (end). Always ordered.
     # covalent bonds
     variable bond_NCa  1.455
@@ -46,7 +46,7 @@ namespace eval peptideb {
     # not simulated, only for vmd
     variable bond_CO   1.235
     variable bond_NH   1.000
-    
+
     # Angles (in Degrees)
     variable angleD_NCaCb  108
     variable angleD_CbCaC  113
@@ -54,16 +54,16 @@ namespace eval peptideb {
     variable angleD_CaCN   116
     variable angleD_CNCa   122
     variable angleD_CaCO   122
-    variable angleD_CaNHN  115 
+    variable angleD_CaNHN  115
     # Dihedral
     variable angleD_NCaCO  135
     variable angleD_CCaNHN 120
     # Improper dihedrals - for chirality
     variable angleD_Im_Cb -122
-    
+
     # Hydrogen bonding equilibrium distance
     variable hbond_NC 4.11
-    
+
     # Angles (in Radians)
     variable angleR_NCaCb  [utils::deg2rad $angleD_NCaCb ]
     variable angleR_CbCaC  [utils::deg2rad $angleD_CbCaC ]
@@ -75,22 +75,22 @@ namespace eval peptideb {
     variable angleR_CaNHN  [utils::deg2rad $angleD_CaNHN ]
     variable angleR_CCaNHN [utils::deg2rad $angleD_CCaNHN]
     variable angleR_Im_Cb  [utils::deg2rad $angleD_Im_Cb ]
-    
-    
-    
+
+
+
     # --------------- Interactions --------------------- #
     # Define unit of energy
     variable eps 1.0
 
     # Rescale all interactions
     variable rescale 1.0;#1.429
-    
+
     # Bonded interactions
     variable k_bond     [expr $rescale*300.0]
-    
+
     # Angles
     variable k_angle    [expr $rescale*300.0]; # From Takada
-    
+
     # Dihedrals
     variable k_dih_omega   [expr $rescale*67.]; # dihedral for \omega - 67 From Takada (one well)
     variable k_dih_w_pro   [expr $rescale* 3.]; # Double well with peak at 6 k_BT
@@ -98,13 +98,13 @@ namespace eval peptideb {
 
     # Dipolar interaction
     variable k_dipolar     [expr $rescale*-0.3]; # best value so far is -0.3 (new -0.55)
-    
+
     # Improper dihedral
     variable k_imp_dih     [expr $rescale*17.] ; # From Takada
-    
+
     # Subtract Lennard-Jones for bonded partners
     #variable max_length 5.0
-    
+
     # Non-bonded interactions
     # Useful Parameters
     variable lj_eps [expr $rescale*.02*$eps]; # Takada : 0.5 kT = 0.3 kcal/mol
@@ -124,7 +124,7 @@ namespace eval peptideb {
     variable ljhp_cut 10.
     # side chain coupling. Default is 1.0; 0.0 will turn the interaction off
     variable hp_coupling 1.0
-    
+
     # Hydrogen bonding
     # Careful with the bonded partners !
     variable ljangle_eps 0.
@@ -140,7 +140,7 @@ namespace eval peptideb {
     }
 
     variable ljangle_cut 8.
-    variable HB_max_cap 200.    
+    variable HB_max_cap 200.
 
     # HBond in bilayer (off by default)
     if {![info exists HB_bilayer_z0]} {
@@ -160,17 +160,26 @@ namespace eval peptideb {
     variable dh_rcut  15.; # in units of \sigma
 
     # DPD stuff
-    variable dpd_r_cut  10.; # as large as the largest cutoff in the force field: 
+    variable dpd_r_cut  10.; # as large as the largest cutoff in the force field:
     # hydrophobic interactions
+
+    # Masses
+    variable mass_N 1.0;
+    variable mass_Ca 1.0
+    variable mass_Cb 1.0
+    variable mass_C 1.0
+
 }
 
 # ------------- Interactions file ------------------- #
 
 # Source the side chain parameters
 source [file join [file dirname [info script]] chain_sidechain.tcl   ]
-# Source the interactions. 
+# Source the interactions.
 source [file join [file dirname [info script]] chain_interactions.tcl]
 # Source the hfip parameter file
 source [file join [file dirname [info script]] hfip_parameters.tcl]
 # Source the hfip interaction file
 source [file join [file dirname [info script]] hfip_interactions.tcl]
+
+

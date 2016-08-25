@@ -85,39 +85,39 @@ namespace eval peptideb {
             # Three types of N beads : terminal-, regular ones, and proline ones which do not Hbond.
             if { $k == 0 } {
             part $j pos [lindex [lindex $chain $jprime] 0] [lindex [lindex $chain $jprime] 1]\
-                [lindex [lindex $chain $jprime] 2] type 4
+                [lindex [lindex $chain $jprime] 2] type 4 mass $peptideb::mass_N
             part $j molecule_id 0
             } elseif {$a_acid != "pro"} {
             # N atoms have type 0
             part $j pos [lindex [lindex $chain $jprime] 0] [lindex [lindex $chain $jprime] 1]\
-                [lindex [lindex $chain $jprime] 2] type 0
+                [lindex [lindex $chain $jprime] 2] type 0 mass $peptideb::mass_N
             part $j molecule_id 0
             } else {
             # Pro-N atoms have type 3
             part $j pos [lindex [lindex $chain $jprime] 0] [lindex [lindex $chain $jprime] 1]\
-                [lindex [lindex $chain $jprime] 2] type 3
+                [lindex [lindex $chain $jprime] 2] type 3 mass $peptideb::mass_N
             part $j molecule_id 0
             }
             incr j
             incr jprime
             # Ca atoms have type 1
             part $j pos [lindex [lindex $chain $jprime] 0] [lindex [lindex $chain $jprime] 1]\
-            [lindex [lindex $chain $jprime] 2] type 1
+            [lindex [lindex $chain $jprime] 2] type 1 mass $peptideb::mass_Ca
             part $j molecule_id 0
             incr j
             incr jprime
             # Cb atoms have type ? - side chains have different types, depending on their hydrophobicity (see side_chain_hp)
-            side_chain_hp $chain $j $jprime $a_acid 0
+            side_chain_hp $chain $j $jprime $a_acid 0 $peptideb::mass_Cb
             incr j
             incr jprime
             # C atoms have type 2 inside the chain and type 5 at the end
             if { $k == [expr $size/4 - 1] } {
             part $j pos [lindex [lindex $chain $jprime] 0] [lindex [lindex $chain $jprime] 1]\
-                [lindex [lindex $chain $jprime] 2] type 5
+                [lindex [lindex $chain $jprime] 2] type 5 mass $peptideb::mass_C
             part $j molecule_id 0
             } else {
             part $j pos [lindex [lindex $chain $jprime] 0] [lindex [lindex $chain $jprime] 1]\
-                [lindex [lindex $chain $jprime] 2] type 2
+                [lindex [lindex $chain $jprime] 2] type 2 mass $peptideb::mass_C
             part $j molecule_id 0
             }
             incr j
@@ -420,13 +420,13 @@ namespace eval peptideb {
     # Returns : nothing. It appends the list of interactions in
     # Espresso.
     # Beads for side chain are identified from 10 to 29.
-    proc side_chain_hp { chain j jprime aa_type mol_count} {
+    proc side_chain_hp { chain j jprime aa_type mol_count mass_cb} {
         set index 10
         foreach name $peptideb::3letter_list {
         set name [string tolower $name]
         if { $aa_type == $name } {
             part $j pos [lindex [lindex $chain $jprime] 0] [lindex [lindex $chain $jprime] 1]\
-            [lindex [lindex $chain $jprime] 2] type $index q [charge $name]
+            [lindex [lindex $chain $jprime] 2] type $index q [charge $name] mass $mass_cb
             part $j molecule_id $mol_count
         }
         incr index
