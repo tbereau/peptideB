@@ -33,10 +33,10 @@ namespace eval peptideb {
     lappend bonded_parms [list 2 harmonic $k_bond $bond_CaC]
     # bond 3 is between C and N
     lappend bonded_parms [list 3 harmonic $k_bond $bond_CN]
-    
-    
+
+
     # Angles
-    
+
     # Angle  N - Ca - Cb
     lappend angle_parms [list 4 angle $k_angle $angleR_NCaCb]
     # Angle  N - Ca - C
@@ -47,12 +47,12 @@ namespace eval peptideb {
     lappend angle_parms [list 7 angle $k_angle $angleR_CaCN ]
     # Angle C - N - Ca
     lappend angle_parms [list 8 angle $k_angle $angleR_CNCa ]
-    
+
     # Dihedrals
-    
+
     # psi and phi now include the dipolar interaction, that biases
     # the potential for beta-sheets rather than alpha helices.
-    # Dihedral \psi and \phi 
+    # Dihedral \psi and \phi
     #lappend dihedral_parms [list 9  dihedral 3 $k_dihedral  $pi]
     # Dihedral \omega
     lappend dihedral_parms [list 10 dihedral 1 $k_dih_omega $pi]
@@ -64,13 +64,13 @@ namespace eval peptideb {
     lappend dihedral_parms [list 12 dihedral 1 $k_imp_dih   $angleR_Im_Cb]
 
 
-    # Subtract Lennard-Jones for bonded partners    
+    # Subtract Lennard-Jones for bonded partners
     #lappend bonded_parms [list 13 subt_lj 0 $max_length]
-    
-    
-    
+
+
+
     # Non-bonded interactions
-    
+
     # --- Matrix of LJ interactions --- #
     # Type     Atom
     #  0          N
@@ -80,8 +80,8 @@ namespace eval peptideb {
     #  4 terminal-N
     #  5 terminal-C
     #  10-29     Sc
-    
-    # ** Backbone beads only ** 
+
+    # ** Backbone beads only **
     # interaction N  and N
     lappend nb_interactions \
 	[list 0 0 lennard-jones $lj_eps [expr 2.*$rvdw_N]  [expr $cut_factor*2.*$rvdw_N ] $lj_shift $ljoffset]
@@ -139,7 +139,7 @@ namespace eval peptideb {
     # interaction term-C and Pro-N
     lappend nb_interactions \
         [list 3 5 lennard-jones $lj_eps $lb_NC   [expr $cut_factor*$lb_NC  ] $lj_shift $ljoffset]
- 
+
 
 
     # ** Now with sidechains **
@@ -148,10 +148,10 @@ namespace eval peptideb {
     foreach name $3letter_list {
 	# No interaction with GLY
 	if {$name != "GLY"} {
-	    # The next line is there only in case we decide to turn on the nb 
+	    # The next line is there only in case we decide to turn on the nb
 	    # interaction with GLY...
 	    if { $name == "GLY" } { set rvdw_SC $rvdw_GLY } else { set rvdw_SC $rvdw_XXX }
-		
+
 	    # interaction N and Sc
 	    set sigma [utils::sum $rvdw_N $rvdw_SC]
 	    lappend nb_interactions \
@@ -212,24 +212,24 @@ namespace eval peptideb {
     # --------------------------------- #
 
     # Hydrogen bonding
-    # Careful with the bonded partners !  
+    # Careful with the bonded partners !
     if {$HB_bilayer_dz > 0.} {
 	lappend nb_interactions [list 0 2 lj-angle $ljangle_eps \
 				     $hbond_NC $ljangle_cut 1 -1 1 \
-				     -2 0 $HB_bilayer_z0 $HB_bilayer_dz \
+				     -2 2 $HB_bilayer_z0 $HB_bilayer_dz \
 				     $HB_bilayer_kappa $ljangle_eps_bilayer]
     } else {
 	lappend nb_interactions [list 0 2 lj-angle $ljangle_eps \
-				     $hbond_NC $ljangle_cut 1 -1 1 -2]
+				     $hbond_NC $ljangle_cut 1 -1 1 -2 2]
     }
-    
+
     # Self interaction - hat potential
     if {$hat_potential > 0. && $HB_bilayer_dz > 0.} {
 	lappend bonded_parms \
 	    [list 17 hat $hat_potential \
 		 $HB_bilayer_z0 $HB_bilayer_dz $HB_bilayer_kappa]
-    }	
-    
+    }
+
 
     # Electrostatics - Debye-Hueckel potential
     # Turn on if it has been set in the parameter file
@@ -237,5 +237,5 @@ namespace eval peptideb {
 	::mmsg::send [namespace current] "Charges are turned on."
 	lappend nb_interactions [list coulomb $dh_bjerrum dh $dh_kappa $dh_rcut]
     }
-    
+
 }

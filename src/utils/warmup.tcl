@@ -28,9 +28,6 @@ namespace eval peptideb {
 	    for { set i 0 } { $i < $times } { incr i } {
 		::mmsg::debug [namespace current] "Warmup step $i of $times at time=[setmd time] (cap=$cap)."
 		inter forcecap $cap
-		if { $cap < $peptideb::HB_max_cap } {
-		    inter ljangleforcecap $cap
-		}
 		integrate $steps
 		set cap [expr $cap + $capincr]
 
@@ -39,12 +36,9 @@ namespace eval peptideb {
 
 	    # Uncapping forces
 	    ::mmsg::send [namespace current] "Uncapping forces."
-	    inter forcecap 0
-	    # We keep a cap on the HBonds during the whole simulation.
-	    inter ljangleforcecap $peptideb::HB_max_cap
-	    ::mmsg::send [namespace current] "The HBond potential will be permanently capped at $peptideb::HB_max_cap"
+	    inter forcecap individual
 
-            setmd time 0
+      setmd time 0
 
 
 	    return
