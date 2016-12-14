@@ -1,12 +1,14 @@
 peptideB
 ========
-Tristan Bereau 
+Original work by Tristan Bereau. Modified by Jingjie Yeo.
 
 Model
 -----
 This software simulates a peptide model described in:
 
 > T. Bereau, M. Deserno, J Chem Phys 130, 235106 (2009) [Journal][jpc]
+
+Crosslinking capabilities are being added but these changes HAVE NOT been fully tested yet.
 
 Program
 -------
