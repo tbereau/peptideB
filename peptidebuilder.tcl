@@ -262,14 +262,20 @@ namespace eval peptideb {
 	    } "-freeze" {
 		set freeze 1
 		::mmsg::send $this "Atoms with 0.00 occupancy will be fixed"
-	    } default {
-		mmsg::err $this "Wrong argument [lindex $argv $k] -- exiting."
 	    } "-crosslink" {
 		set crosslink 1
+		
 		set crosslink_file [lindex $argv [expr $k+1]]
-		mmsg::send $this "Loaded index of crosslinked atomIDs from $crosslink_file."		
-		incr k
-		}
+		set crosslink_spring [lindex $argv [expr $k+2]]
+		set crosslink_cut [lindex $argv [expr $k+3]]
+		
+		mmsg::send $this "Loaded index of crosslinked atomIDs from $crosslink_file."
+		mmsg::send $this "Crosslink spring constant is $crosslink_spring and cutoff is $crosslink_cut."
+		
+		incr k 3
+	    } default {
+		mmsg::err $this "Wrong argument [lindex $argv $k] -- exiting."
+	    } 
 	}
     }
     
