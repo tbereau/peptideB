@@ -324,7 +324,8 @@ namespace eval peptideb {
                 
         # Add crosslinks        
         if { $peptideb::crosslink } {
-		inter 40 harmonic 300 15
+		inter 40 harmonic $peptideb::crosslink_spring $peptideb::crosslink_cut
+		
 		foreach {crosslink1 crosslink2} $peptideb::crosslinkAtomIDS {
 		part $crosslink1 bond 40 $crosslink2
 		::mmsg::send [namespace current] "Crosslinked atoms $crosslink1 and $crosslink2."
