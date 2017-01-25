@@ -71,6 +71,7 @@ set usage "Usage:
 \t-randequilib \t\t choose dihedrals randomly from an equilibrated basin (no high free energy configurations)
 \t-virtual_com N \t\t add virtual site: center of mass of peptide number N (starting from 1)
 \t-freeze \t\t freeze atoms that have 0.00 occupancy in input PDB
+\t-crosslink \t\t create crosslinks between atoms in user-specified file
 "
 
 # ----------------------------------------------------------- #
@@ -104,6 +105,7 @@ namespace eval peptideb {
     set virtual_com -1
     set freeze 0
     set frozen ""
+    set crosslink 0
 
     # Read the amino acids sequence, plus other parameters. Sequence can be accessed by $amino_acids.
     source $paramsfile
@@ -260,9 +262,20 @@ namespace eval peptideb {
 	    } "-freeze" {
 		set freeze 1
 		::mmsg::send $this "Atoms with 0.00 occupancy will be fixed"
+	    } "-crosslink" {
+		set crosslink 1
+		
+		set crosslink_file [lindex $argv [expr $k+1]]
+		set crosslink_spring [lindex $argv [expr $k+2]]
+		set crosslink_cut [lindex $argv [expr $k+3]]
+		
+		mmsg::send $this "Loaded index of crosslinked atomIDs from $crosslink_file."
+		mmsg::send $this "Crosslink spring constant is $crosslink_spring and cutoff is $crosslink_cut."
+		
+		incr k 3
 	    } default {
 		mmsg::err $this "Wrong argument [lindex $argv $k] -- exiting."
-	    }
+	    } 
 	}
     }
     
@@ -556,7 +569,13 @@ namespace eval peptideb {
 
 	# Write a vmd startup file.
 	output::pdbstartup
-	
+		
+	if { [info exists crosslink_file]} {
+		# Import the crosslink file.
+		set fp [open "$crosslink_file" "r"]
+		set crosslinkAtomIDS [ read $fp ]
+		close $fp
+	}
 	
 	if { $espresso == "on"} {
 	    # Output the initial configuration to ESPResSo without
@@ -571,6 +590,7 @@ namespace eval peptideb {
 	    output::pdb $coords
 	}
     }
+	
 
 
     # Delete hostfile for replica exchange

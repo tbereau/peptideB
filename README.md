@@ -1,12 +1,14 @@
 peptideB
 ========
-Tristan Bereau 
+Original work by Tristan Bereau. Modified by Jingjie Yeo.
 
 Model
 -----
 This software simulates a peptide model described in:
 
 > T. Bereau, M. Deserno, J Chem Phys 130, 235106 (2009) [Journal][jpc]
+
+Crosslinking capabilities are being added but these changes HAVE NOT been fully tested yet.
 
 Program
 -------
@@ -28,5 +30,5 @@ Usage
 peptideB's documentation can be found on its [Wiki page](https://github.com/tbereau/peptideB/wiki).
 
 
-[jpc]: http://link.aip.org/link/doi/10.1063/1.3152842
+[jpc]: http://aip.scitation.org/doi/full/10.1063/1.3152842
 [![githalytics.com alpha](https://cruel-carlota.pagodabox.com/1adc9e622abb43b177d23674afdc5238 "githalytics.com")](http://githalytics.com/tbereau/peptideB)

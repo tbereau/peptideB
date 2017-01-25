@@ -321,6 +321,16 @@ namespace eval peptideb {
         # partners linked by 1 one or 2 bonds.
         part auto_exclusions 2
         }
+                
+        # Add crosslinks        
+        if { $peptideb::crosslink } {
+		inter 40 harmonic $peptideb::crosslink_spring $peptideb::crosslink_cut
+		
+		foreach {crosslink1 crosslink2} $peptideb::crosslinkAtomIDS {
+		part $crosslink1 bond 40 $crosslink2
+		::mmsg::send [namespace current] "Crosslinked atoms $crosslink1 and $crosslink2."
+		}
+	}
 
         return 
     }
